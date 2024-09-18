@@ -13,7 +13,6 @@ enum
 enum
 {
     HEALTH_BAR,
-    EXP_BAR
 };
 
 enum
@@ -88,8 +87,6 @@ enum
     HEALTHBOX_MAX_HP,
     HEALTHBOX_LEVEL,
     HEALTHBOX_NICK,
-    HEALTHBOX_HEALTH_BAR,
-    HEALTHBOX_EXP_BAR,
     HEALTHBOX_UNUSED_7,
     HEALTHBOX_UNUSED_8,
     HEALTHBOX_STATUS_ICON,
@@ -100,7 +97,6 @@ enum
 u32 WhichBattleCoords(u32 battlerId);
 u8 CreateBattlerHealthboxSprites(u8 battler);
 u8 CreateSafariPlayerHealthboxSprites(void);
-void SetBattleBarStruct(u8 battler, u8 healthboxSpriteId, s32 maxVal, s32 currVal, s32 receivedValue);
 void SetHealthboxSpriteInvisible(u8 healthboxSpriteId);
 void SetHealthboxSpriteVisible(u8 healthboxSpriteId);
 void DummyBattleInterfaceFunc(u8 healthboxSpriteId, bool8 isDoubleBattleBankOnly);

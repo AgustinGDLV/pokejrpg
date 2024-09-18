@@ -93,9 +93,7 @@ static void SwitchIn_HandleSoundAndEnd(u32 battler);
 static void WaitForMonSelection(u32 battler);
 static void CompleteWhenChoseItem(u32 battler);
 static void Task_LaunchLvlUpAnim(u8);
-static void Task_PrepareToGiveExpWithExpBar(u8);
 static void Task_SetControllerToWaitForString(u8);
-static void Task_GiveExpWithExpBar(u8);
 static void Task_UpdateLvlInHealthbox(u8);
 static void PrintLinkStandbyMsg(void);
 
@@ -1423,125 +1421,42 @@ static void Task_GiveExpToMon(u8 taskId)
     u8 battler = gTasks[taskId].tExpTask_battler;
     s32 gainedExp = GetTaskExpValue(taskId);
 
-    if (WhichBattleCoords(battler) == 1 || monId != gBattlerPartyIndexes[battler]) // Give exp without moving the expbar.
-    {
-        struct Pokemon *mon = &gPlayerParty[monId];
-        u16 species = GetMonData(mon, MON_DATA_SPECIES);
-        u8 level = GetMonData(mon, MON_DATA_LEVEL);
-        u32 currExp = GetMonData(mon, MON_DATA_EXP);
-        u32 nextLvlExp = gExperienceTables[gSpeciesInfo[species].growthRate][level + 1];
-
-        if (currExp + gainedExp >= nextLvlExp)
-        {
-            SetMonData(mon, MON_DATA_EXP, &nextLvlExp);
-            gBattleStruct->dynamax.levelUpHP = GetMonData(mon, MON_DATA_HP) \
-                + UQ_4_12_TO_INT((gBattleScripting.levelUpHP * UQ_4_12(1.5)) + UQ_4_12_ROUND);
-            CalculateMonStats(mon);
-
-            // Reapply Dynamax HP multiplier after stats are recalculated.
-            if (GetActiveGimmick(battler) == GIMMICK_DYNAMAX && monId == gBattlerPartyIndexes[battler])
-            {
-                ApplyDynamaxHPMultiplier(battler, mon);
-                gBattleMons[battler].hp = gBattleStruct->dynamax.levelUpHP;
-                SetMonData(mon, MON_DATA_HP, &gBattleMons[battler].hp);
-            }
-
-            gainedExp -= nextLvlExp - currExp;
-            BtlController_EmitTwoReturnValues(battler, BUFFER_B, RET_VALUE_LEVELED_UP, gainedExp);
-
-            if (IsDoubleBattle() == TRUE
-             && (monId == gBattlerPartyIndexes[battler] || monId == gBattlerPartyIndexes[BATTLE_PARTNER(battler)]))
-                gTasks[taskId].func = Task_LaunchLvlUpAnim;
-            else
-                gTasks[taskId].func = Task_SetControllerToWaitForString;
-        }
-        else
-        {
-            currExp += gainedExp;
-            SetMonData(mon, MON_DATA_EXP, &currExp);
-            gBattlerControllerFuncs[battler] = Controller_WaitForString;
-            DestroyTask(taskId);
-        }
-    }
-    else
-    {
-        gTasks[taskId].func = Task_PrepareToGiveExpWithExpBar;
-    }
-}
-
-static void Task_PrepareToGiveExpWithExpBar(u8 taskId)
-{
-    u8 monIndex = gTasks[taskId].tExpTask_monId;
-    s32 gainedExp = GetTaskExpValue(taskId);
-    u8 battler = gTasks[taskId].tExpTask_battler;
-    struct Pokemon *mon = &gPlayerParty[monIndex];
-    u8 level = GetMonData(mon, MON_DATA_LEVEL);
+    struct Pokemon *mon = &gPlayerParty[monId];
     u16 species = GetMonData(mon, MON_DATA_SPECIES);
-    u32 exp = GetMonData(mon, MON_DATA_EXP);
-    u32 currLvlExp = gExperienceTables[gSpeciesInfo[species].growthRate][level];
-    u32 expToNextLvl;
+    u8 level = GetMonData(mon, MON_DATA_LEVEL);
+    u32 currExp = GetMonData(mon, MON_DATA_EXP);
+    u32 nextLvlExp = gExperienceTables[gSpeciesInfo[species].growthRate][level + 1];
 
-    exp -= currLvlExp;
-    expToNextLvl = gExperienceTables[gSpeciesInfo[species].growthRate][level + 1] - currLvlExp;
-    SetBattleBarStruct(battler, gHealthboxSpriteIds[battler], expToNextLvl, exp, -gainedExp);
-    TestRunner_Battle_RecordExp(battler, exp, -gainedExp);
-    PlaySE(SE_EXP);
-    gTasks[taskId].func = Task_GiveExpWithExpBar;
-}
-
-static void Task_GiveExpWithExpBar(u8 taskId)
-{
-    u8 level;
-    u16 species;
-    s32 currExp, expOnNextLvl, newExpPoints;
-
-    if (gTasks[taskId].tExpTask_frames < 13)
+    if (currExp + gainedExp >= nextLvlExp)
     {
-        gTasks[taskId].tExpTask_frames++;
+        SetMonData(mon, MON_DATA_EXP, &nextLvlExp);
+        gBattleStruct->dynamax.levelUpHP = GetMonData(mon, MON_DATA_HP) \
+            + UQ_4_12_TO_INT((gBattleScripting.levelUpHP * UQ_4_12(1.5)) + UQ_4_12_ROUND);
+        CalculateMonStats(mon);
+
+        // Reapply Dynamax HP multiplier after stats are recalculated.
+        if (GetActiveGimmick(battler) == GIMMICK_DYNAMAX && monId == gBattlerPartyIndexes[battler])
+        {
+            ApplyDynamaxHPMultiplier(battler, mon);
+            gBattleMons[battler].hp = gBattleStruct->dynamax.levelUpHP;
+            SetMonData(mon, MON_DATA_HP, &gBattleMons[battler].hp);
+        }
+
+        gainedExp -= nextLvlExp - currExp;
+        BtlController_EmitTwoReturnValues(battler, BUFFER_B, RET_VALUE_LEVELED_UP, gainedExp);
+
+        if (IsDoubleBattle() == TRUE
+            && (monId == gBattlerPartyIndexes[battler] || monId == gBattlerPartyIndexes[BATTLE_PARTNER(battler)]))
+            gTasks[taskId].func = Task_LaunchLvlUpAnim;
+        else
+            gTasks[taskId].func = Task_SetControllerToWaitForString;
     }
     else
     {
-        u8 monId = gTasks[taskId].tExpTask_monId;
-        s32 gainedExp = GetTaskExpValue(taskId);
-        u8 battler = gTasks[taskId].tExpTask_battler;
-
-        newExpPoints = MoveBattleBar(battler, gHealthboxSpriteIds[battler], EXP_BAR, 0);
-        SetHealthboxSpriteVisible(gHealthboxSpriteIds[battler]);
-        if (newExpPoints == -1) // The bar has been filled with given exp points.
-        {
-            m4aSongNumStop(SE_EXP);
-            level = GetMonData(&gPlayerParty[monId], MON_DATA_LEVEL);
-            currExp = GetMonData(&gPlayerParty[monId], MON_DATA_EXP);
-            species = GetMonData(&gPlayerParty[monId], MON_DATA_SPECIES);
-            expOnNextLvl = gExperienceTables[gSpeciesInfo[species].growthRate][level + 1];
-
-            if (currExp + gainedExp >= expOnNextLvl)
-            {
-                SetMonData(&gPlayerParty[monId], MON_DATA_EXP, &expOnNextLvl);
-                gBattleStruct->dynamax.levelUpHP = GetMonData(&gPlayerParty[monId], MON_DATA_HP) \
-                    + UQ_4_12_TO_INT((gBattleScripting.levelUpHP * UQ_4_12(1.5)) + UQ_4_12_ROUND);
-                CalculateMonStats(&gPlayerParty[monId]);
-
-                // Reapply Dynamax HP multiplier after stats are recalculated.
-                if (GetActiveGimmick(battler) == GIMMICK_DYNAMAX && monId == gBattlerPartyIndexes[battler])
-                {
-                    ApplyDynamaxHPMultiplier(battler, &gPlayerParty[monId]);
-                    gBattleMons[battler].hp = gBattleStruct->dynamax.levelUpHP;
-                    SetMonData(&gPlayerParty[monId], MON_DATA_HP, &gBattleMons[battler].hp);
-                }
-
-                gainedExp -= expOnNextLvl - currExp;
-                BtlController_EmitTwoReturnValues(battler, BUFFER_B, RET_VALUE_LEVELED_UP, gainedExp);
-                gTasks[taskId].func = Task_LaunchLvlUpAnim;
-            }
-            else
-            {
-                currExp += gainedExp;
-                SetMonData(&gPlayerParty[monId], MON_DATA_EXP, &currExp);
-                gBattlerControllerFuncs[battler] = Controller_WaitForString;
-                DestroyTask(taskId);
-            }
-        }
+        currExp += gainedExp;
+        SetMonData(mon, MON_DATA_EXP, &currExp);
+        gBattlerControllerFuncs[battler] = Controller_WaitForString;
+        DestroyTask(taskId);
     }
 }
 
@@ -1804,41 +1719,41 @@ static void MoveSelectionDisplayMoveDescription(u32 battler)
 void MoveSelectionCreateCursorAt(u8 cursorPosition, u8 baseTileNum)
 {
     u16 src[2];
-    src[0] = baseTileNum + 1;
-    src[1] = baseTileNum + 2;
+    src[0] = 8;
+    src[1] = 9;
 
-    // CopyToBgTilemapBufferRect_ChangePalette(0, src, 9 * (cursorPosition & 1) + 1, 55 + (cursorPosition & 2), 1, 2, 0x11);
-    // CopyBgTilemapBufferToVram(0);
+    CopyToBgTilemapBufferRect(0, src, 1 + 9 * (cursorPosition & 1), 41 + (cursorPosition & 2), 1, 2);
+    CopyBgTilemapBufferToVram(0);
 }
 
 void MoveSelectionDestroyCursorAt(u8 cursorPosition)
 {
     u16 src[2];
-    src[0] = 0x1016;
-    src[1] = 0x1016;
+    src[0] = 5;
+    src[1] = 5;
 
-    // CopyToBgTilemapBufferRect_ChangePalette(0, src, 9 * (cursorPosition & 1) + 1, 55 + (cursorPosition & 2), 1, 2, 0x11);
-    // CopyBgTilemapBufferToVram(0);
+    CopyToBgTilemapBufferRect(0, src, 1 + 9 * (cursorPosition & 1), 41 + (cursorPosition & 2), 1, 2);
+    CopyBgTilemapBufferToVram(0);
 }
 
 void ActionSelectionCreateCursorAt(u8 cursorPosition, u8 baseTileNum)
 {
     u16 src[2];
-    src[0] = 1;
-    src[1] = 2;
+    src[0] = 8;
+    src[1] = 9;
 
-    // CopyToBgTilemapBufferRect_ChangePalette(0, src, 7 * (cursorPosition & 1) + 16, 35 + (cursorPosition & 2), 1, 2, 0x11);
-    // CopyBgTilemapBufferToVram(0);
+    CopyToBgTilemapBufferRect(0, src, 4 + 11 * (cursorPosition & 1), 21 + (cursorPosition & 2), 1, 2);
+    CopyBgTilemapBufferToVram(0);
 }
 
 void ActionSelectionDestroyCursorAt(u8 cursorPosition)
 {
     u16 src[2];
-    src[0] = 0x1016;
-    src[1] = 0x1016;
+    src[0] = 5;
+    src[1] = 5;
 
-    // CopyToBgTilemapBufferRect_ChangePalette(0, src, 7 * (cursorPosition & 1) + 16, 35 + (cursorPosition & 2), 1, 2, 0x11);
-    // CopyBgTilemapBufferToVram(0);
+    CopyToBgTilemapBufferRect(0, src, 4 + 11 * (cursorPosition & 1), 21 + (cursorPosition & 2), 1, 2);
+    CopyBgTilemapBufferToVram(0);
 }
 
 void CB2_SetUpReshowBattleScreenAfterMenu(void)
@@ -2183,7 +2098,6 @@ void PlayerHandleExpUpdate(u32 battler)
     }
     else
     {
-        LoadBattleBarGfx(1);
         expPointsToGive = T1_READ_32(&gBattleResources->bufferA[battler][2]);
         taskId = CreateTask(Task_GiveExpToMon, 10);
         gTasks[taskId].tExpTask_monId = monId;
