@@ -674,17 +674,14 @@ bool8 BattleLoadAllHealthBoxesGfx(u8 state)
             LoadIndicatorSpritesGfx();
             CategoryIcons_LoadSpritesGfx();
         }
+        else if (state == 2)
+            LoadCompressedSpriteSheet(&sSpriteSheets_Healthbox[0]);
+        else if (state == 3)
+            LoadCompressedSpriteSheet(&sSpriteSheets_Healthbox[1]);
+        else if (state == 4)
+            LoadCompressedSpriteSheet(&sSpriteSheets_Healthbox[2]);
         else
-        {
-            if (state == 2)
-                LoadCompressedSpriteSheet(&sSpriteSheets_Healthbox[0]);
-            else if (state == 3)
-                LoadCompressedSpriteSheet(&sSpriteSheets_Healthbox[1]);
-            else if (state == 4)
-                LoadCompressedSpriteSheet(&sSpriteSheets_Healthbox[2]);
-            else
-                retVal = TRUE;
-        }
+            retVal = TRUE;
     }
 
     return retVal;
@@ -760,6 +757,7 @@ bool8 BattleInitAllSprites(u8 *state1, u8 *battler)
         }
         break;
     case 6:
+        gBattlerSpriteIds[0] = 0xFF; // *TODO
         LoadAndCreateEnemyShadowSprites();
         BufferBattlePartyCurrentOrder();
         retVal = TRUE;

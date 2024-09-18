@@ -650,9 +650,6 @@ u8 CreateBattlerHealthboxSprites(u8 battlerId)
     gSprites[healthboxRightSpriteId].callback = SpriteCB_HealthBoxOther;
 
     gSprites[healthboxLeftSpriteId].hMain_Battler = battlerId;
-    gSprites[healthboxLeftSpriteId].invisible = TRUE;
-
-    gSprites[healthboxRightSpriteId].invisible = TRUE;
 
     CreateIndicatorSprite(battlerId);
 
@@ -764,18 +761,21 @@ void DummyBattleInterfaceFunc(u8 healthboxSpriteId, bool8 isDoubleBattleBattlerO
 
 static void TryToggleHealboxVisibility(u32 priority, u32 healthboxLeftSpriteId, u32 healthboxRightSpriteId, u32 healthbarSpriteId)
 {
-    bool32 invisible = FALSE;
+    // *TODO
+    return;
 
-    if (priority == 0)  // start of anim -> make invisible
-        invisible = TRUE;
-    else if (priority == 1) // end of anim -> make visible
-        invisible = FALSE;
+    // bool32 invisible = FALSE;
 
-    gSprites[healthboxLeftSpriteId].invisible = invisible;
-    gSprites[healthboxRightSpriteId].invisible = invisible;
-    gSprites[healthbarSpriteId].invisible = invisible;
+    // if (priority == 0)  // start of anim -> make invisible
+    //     invisible = TRUE;
+    // else if (priority == 1) // end of anim -> make visible
+    //     invisible = FALSE;
 
-    UpdateIndicatorVisibilityAndType(healthboxLeftSpriteId, invisible);
+    // gSprites[healthboxLeftSpriteId].invisible = invisible;
+    // gSprites[healthboxRightSpriteId].invisible = invisible;
+    // gSprites[healthbarSpriteId].invisible = invisible;
+
+    // UpdateIndicatorVisibilityAndType(healthboxLeftSpriteId, invisible);
 }
 
 void UpdateOamPriorityInAllHealthboxes(u8 priority, bool32 hideHPBoxes)
