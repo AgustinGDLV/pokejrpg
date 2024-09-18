@@ -26,8 +26,7 @@ enum
 
 #define TAG_HEALTHBOX_PLAYER1_TILE      0xD6FF
 #define TAG_HEALTHBOX_PLAYER2_TILE      0xD700
-#define TAG_HEALTHBOX_OPPONENT1_TILE    0xD701
-#define TAG_HEALTHBOX_OPPONENT2_TILE    0xD702
+#define TAG_HEALTHBOX_PLAYER3_TILE      0xD701
 
 #define TAG_HEALTHBAR_PLAYER1_TILE      0xD704
 #define TAG_HEALTHBAR_OPPONENT1_TILE    0xD705
@@ -97,6 +96,7 @@ enum
 u32 WhichBattleCoords(u32 battlerId);
 u8 CreateBattlerHealthboxSprites(u8 battler);
 u8 CreateSafariPlayerHealthboxSprites(void);
+void SetBattleBarStruct(u8 battler, u8 healthboxSpriteId, s32 maxVal, s32 currVal, s32 receivedValue);
 void SetHealthboxSpriteInvisible(u8 healthboxSpriteId);
 void SetHealthboxSpriteVisible(u8 healthboxSpriteId);
 void DummyBattleInterfaceFunc(u8 healthboxSpriteId, bool8 isDoubleBattleBankOnly);
