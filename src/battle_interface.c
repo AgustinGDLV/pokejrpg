@@ -808,14 +808,14 @@ void GetBattlerHealthboxCoords(u8 battler, s16 *x, s16 *y)
         if (GetBattlerSide(battler) != B_SIDE_PLAYER)
             *x = 44, *y = 30;
         else
-            *x = 158, *y = 88;
+            *x = 32, *y = 128;
     }
     else
     {
         switch (GetBattlerPosition(battler))
         {
         case B_POSITION_PLAYER_LEFT:
-            *x = 159, *y = 76;
+            *x = 32, *y = 128;
             break;
         case B_POSITION_PLAYER_RIGHT:
             *x = 171, *y = 101;
