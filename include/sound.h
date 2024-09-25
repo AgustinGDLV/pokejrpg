@@ -15,7 +15,6 @@ void FadeOutAndFadeInNewMapMusic(u16 songNum, u8 fadeOutSpeed, u8 fadeInSpeed);
 bool8 IsNotWaitingForBGMStop(void);
 void PlayFanfareByFanfareNum(u8 fanfareNum);
 bool8 WaitFanfare(bool8 stop);
-void StopFanfareByFanfareNum(u8 fanfareNum);
 void PlayFanfare(u16 songNum);
 bool8 IsFanfareTaskInactive(void);
 void FadeInNewBGM(u16 songNum, u8 speed);
@@ -45,5 +44,7 @@ void SE12PanpotControl(s8 pan);
 bool8 IsSEPlaying(void);
 bool8 IsBGMPlaying(void);
 bool8 IsSpecialSEPlaying(void);
+
+extern struct MusicPlayerInfo *gMPlay_PokemonCry;
 
 #endif // GUARD_SOUND_H

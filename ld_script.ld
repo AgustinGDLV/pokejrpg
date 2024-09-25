@@ -190,6 +190,7 @@ SECTIONS {
         src/money.o(.text);
         src/contest_effect.o(.text);
         src/record_mixing.o(.text);
+        src/debug/sound_check_menu.o(.text);
         src/secret_base.o(.text);
         src/tv.o(.text);
         src/contest_util.o(.text);
@@ -456,6 +457,7 @@ SECTIONS {
         *libc.a:libcfunc.o(.text);
         *libc.a:lseekr.o(.text);
         *libc.a:readr.o(.text);
+        src/gbs.o(.text);
     } > ROM =0
 
     .rodata :
@@ -574,6 +576,7 @@ SECTIONS {
         src/money.o(.rodata);
         src/contest_effect.o(.rodata);
         src/record_mixing.o(.rodata);
+        src/debug/sound_check_menu.o(.rodata);
         src/secret_base.o(.rodata);
         src/tv.o(.rodata);
         src/contest_util.o(.rodata);
@@ -1331,6 +1334,37 @@ SECTIONS {
     {
         src/graphics.o(.rodata);
     } > ROM =0
+
+    gbs_data :
+    ALIGN(4)
+    {
+        src/gbs.o(.rodata);
+        src/gbs_song_table.o(.rodata);
+
+        /* GBS songs */
+        sound/songs/gbs/gbs_lakeofrage.o(.rodata);
+        sound/songs/gbs/gbs_route37.o(.rodata);
+        sound/songs/gbs/gbs_violetcity.o(.rodata);
+        sound/songs/gbs/gbs_viridiancity.o(.rodata);
+        sound/songs/gbs/gbs_azaleatown.o(.rodata);
+
+        sound/songs/gbs/gbs_suicunebattle.o(.rodata);
+        sound/songs/gbs/gbs_mobilecenter.o(.rodata);
+
+        sound/songs/gbs/gbs_sfx.o(.rodata);
+
+        sound/songs/gbs/gbs_lavender.o(.rodata);
+        sound/songs/gbs/gbs_trainerbattle.o(.rodata);
+        sound/songs/gbs/gbs_bikeriding.o(.rodata);
+        sound/songs/gbs/gbs_rby_titlescreen.o(.rodata);
+        sound/songs/gbs/gbs_dungeon2.o(.rodata);
+        sound/songs/gbs/gbs_cinnabarmansion.o(.rodata);
+        sound/songs/gbs/gbs_pokemontower.o(.rodata);
+
+        sound/songs/gbs/gbs_route101.o(.rodata);
+        sound/songs/gbs/gbs_abandonedship.o(.rodata);
+        sound/songs/gbs/gbs_oceanicmuseum.o(.rodata);
+    } =0
 
     extra :
     ALIGN(4)
