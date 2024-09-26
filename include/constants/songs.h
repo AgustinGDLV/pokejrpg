@@ -495,8 +495,9 @@
 
 #define MUS_GB_VAST_PONI_CANYON     559
 #define MUS_GB_BATTLE_SIM           560
+#define MUS_GB_ALOLA_WILD_BATTLE        561
 
-#define END_MUS                     MUS_GB_BATTLE_SIM
+#define END_MUS                     MUS_GB_ALOLA_WILD_BATTLE
 
 #define PH_TRAP_BLEND               561
 #define PH_TRAP_HELD                562

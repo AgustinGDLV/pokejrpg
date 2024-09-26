@@ -4626,6 +4626,7 @@ static void DebugAction_Sound_MUS_SelectId(u8 taskId)
     X(MUS_RG_TEACHY_TV_MENU) \
     X(MUS_GB_VAST_PONI_CANYON) \
     X(MUS_GB_BATTLE_SIM) \
+    X(MUS_GB_ALOLA_WILD_BATTLE) \
     X(PH_TRAP_BLEND) \
     X(PH_TRAP_HELD) \
     X(PH_TRAP_SOLO) \

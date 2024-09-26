@@ -31,5 +31,6 @@ extern const struct SongHeader gbs_Music_OceanicMuseumRSE;
 
 extern const struct SongHeader gbs_Music_VastPoniCanyon;
 extern const struct SongHeader gbs_Music_BattleSim;
+extern const struct SongHeader gbs_Music_AlolaWildBattle;
 
 #endif // GUARD_GBS_SONG_TABLE_H

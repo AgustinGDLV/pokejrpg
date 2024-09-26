@@ -564,6 +564,7 @@ gSongTable::
 	song mus_rg_teachy_tv_menu, 0, 0
 	song dummy_song_header, 0, GBS_MUSIC_VAST_PONI_CANYON
 	song dummy_song_header, 0, GBS_MUSIC_BATTLE_SIM
+	song dummy_song_header, 0, GBS_MUSIC_ALOLA_WILD_BATTLE
 	song ph_trap_blend, 2, 0
 	song ph_trap_held, 2, 0
 	song ph_trap_solo, 2, 0

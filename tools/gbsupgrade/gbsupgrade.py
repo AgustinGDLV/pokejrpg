@@ -307,8 +307,10 @@ def upgrade_macro(command, state):
 			command = re.sub(vibrato_pattern_full, "vibrato {}, {}, {}".format(delay, depth, rate), command, 1)
 
 	# togglenoise/toggle_noise
-	elif re.match(togglenoise_pattern, command_stripped):
-		command = re.sub(togglenoise_pattern, "toggle_noise", command, 1)
+	if command_stripped.startswith('togglenoise'):
+		_, arg1 = command_stripped.split()
+		arg1 = parse_value(arg1)
+		command = '\ttoggle_noise %s\n' % (arg1)
 
 	# panning/force_stereo_panning
 	elif re.match(panning_pattern, command_stripped):
