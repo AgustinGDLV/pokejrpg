@@ -3,10 +3,9 @@
 @ Version 5.0.1 (7-Feb-2021)
 @ Visit github.com/TriteHexagon/Midi2ASM-Converter for up-to-date versions.
 
-@ ============================================================================================================
+@ ===========================================================================================================
 
 	.include "asm/macros.inc"
-
 	.section .rodata
 	.global gbs_Music_VastPoniCanyon
 	.align 2
@@ -216,7 +215,7 @@ Music_VastPoniCanyon_Ch1_loop:
 
 Music_VastPoniCanyon_Ch1_Bar1:
 	rest 2
-	note G_, 1@
+	note G_, 1@ 
 	note A_, 1
 	rest 1
 	note D_, 1
@@ -235,7 +234,7 @@ Music_VastPoniCanyon_Ch1_Bar1:
 	sound_ret
 
 Music_VastPoniCanyon_Ch1_Bar2:
-	note D_, 1@
+	note D_, 1@ 
 	note E_, 1
 	rest 1
 	note G_, 1
@@ -254,7 +253,7 @@ Music_VastPoniCanyon_Ch1_Bar2:
 	rest 2
 	sound_ret
 
-@ ============================================================================================================
+@  ============================================================================================================
 
 gbs_Music_VastPoniCanyon_Ch2:
 	gbs_switch 1
@@ -281,9 +280,9 @@ Music_VastPoniCanyon_Ch2_loop:
 	note Gs, 8
 @ Bar 8
 	note G_, 10
-	vibrato 8, 4, 4
+	vibrato 8, 1, 4
 	volume_envelope 14, 7
-	note C_, 1
+	note C_, 1 
 	rest 1
 	note D_, 1
 	note C_, 1
@@ -504,10 +503,10 @@ Music_VastPoniCanyon_Ch2_loop:
 	octave 6
 	volume_envelope 9, 8
 	note C_, 8
-	vibrato 0, 4, 4
+	vibrato 0, 1, 4
 	volume_envelope 9, 7
 	note C_, 8
-	vibrato 8, 4, 4
+	vibrato 8, 1, 4
 	rest 8
 @ Bar 26
 	rest 16
@@ -625,7 +624,7 @@ Music_VastPoniCanyon_Ch2_loop:
 	sound_loop 0, Music_VastPoniCanyon_Ch2_loop
 	sound_ret
 
-@ ============================================================================================================
+@  ============================================================================================================
 
 gbs_Music_VastPoniCanyon_Ch3:
 	gbs_switch 2
@@ -844,7 +843,7 @@ Music_VastPoniCanyon_Ch3_loop:
 @ Bar 35
 Music_VastPoniCanyon_Ch3_Bar35:
 	rest 2
-	note G_, 1@
+	note G_, 1@ 
 	note A_, 1
 	rest 1
 	note D_, 1
@@ -861,7 +860,7 @@ Music_VastPoniCanyon_Ch3_Bar35:
 	note A_, 1
 	rest 1
 @ Bar 36
-	note D_, 1@
+	note D_, 1@ 
 	note E_, 1
 	rest 1
 	note G_, 1
@@ -882,7 +881,7 @@ Music_VastPoniCanyon_Ch3_Bar35:
 	sound_loop 0, Music_VastPoniCanyon_Ch3_loop
 
 Music_VastPoniCanyon_Ch3_Bar5:
-	note F_, 2@
+	note F_, 2@ 
 	note E_, 1
 	note F_, 1
 	rest 5
@@ -893,7 +892,7 @@ Music_VastPoniCanyon_Ch3_Bar5:
 	sound_ret
 
 Music_VastPoniCanyon_Ch3_Bar6:
-	note A_, 1@
+	note A_, 1@ 
 	rest 1
 	note G_, 1
 	note A_, 1
@@ -908,14 +907,14 @@ Music_VastPoniCanyon_Ch3_Bar6:
 	sound_ret
 
 Music_VastPoniCanyon_Ch3_Bar6_P2:
-	rest 2@
+	rest 2@ 
 	octave 3
 	note A_, 1
 	note G_, 1
 	rest 1
 	sound_ret
 
-@ ============================================================================================================
+@  ============================================================================================================
 
 gbs_Music_VastPoniCanyon_Ch4:
 	gbs_switch 3
@@ -928,12 +927,12 @@ Music_VastPoniCanyon_Ch4:
 	rest 16
 	rest 10
 @ Bar 4
-	note G_, 1
-	note G_, 1
-	note G_, 1
-	note G_, 1
-	note G_, 1
-	note G_, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 8, 1
 @ Bar 5
 Music_VastPoniCanyon_Ch4_loop:
 	sound_call Music_VastPoniCanyon_Ch4_Bar2
@@ -981,65 +980,65 @@ Music_VastPoniCanyon_Ch4_loop:
 	sound_call Music_VastPoniCanyon_Ch4_Bar2
 @ Bar 27
 Music_VastPoniCanyon_Ch4_Bar27_28:
-	note Ds, 1
-	note G_, 1
-	note G_, 1
-	note D_, 1
-	note G_, 1
-	note G_, 1
-	note D_, 1
-	note G_, 1
-	note Ds, 1
-	note G_, 1
-	note Ds, 1
-	note G_, 1
-	note D_, 1
-	note As, 1
-	note As, 1
-	note G_, 1
+	drum_note 4, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 3, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 3, 1
+	drum_note 8, 1
+	drum_note 4, 1
+	drum_note 8, 1
+	drum_note 4, 1
+	drum_note 8, 1
+	drum_note 3, 1
+	drum_note 11, 1
+	drum_note 11, 1
+	drum_note 8, 1
 @ Bar 28
-	note Ds, 1
-	note G_, 1
-	note B_, 4
-	note G_, 1
-	note G_, 1
-	note Ds, 1
-	note G_, 1
-	note G_, 1
-	note G_, 1
-	note D_, 1
-	note As, 1
-	note As, 1
-	note G_, 1
+	drum_note 4, 1
+	drum_note 8, 1
+	drum_note 12, 4
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 4, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 3, 1
+	drum_note 11, 1
+	drum_note 11, 1
+	drum_note 8, 1
 	sound_loop 2, Music_VastPoniCanyon_Ch4_Bar27_28
 @ Bar 31
-	note Fs, 2
-	note G_, 1
-	note G_, 1
-	note D_, 1
-	note G_, 1
-	note Fs, 2
-	note Ds, 1
-	note G_, 1
-	note G_, 1
-	note G_, 1
-	note D_, 1
-	note G_, 1
-	note Fs, 2
+	drum_note 7, 2
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 3, 1
+	drum_note 8, 1
+	drum_note 7, 2
+	drum_note 4, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 3, 1
+	drum_note 8, 1
+	drum_note 7, 2
 @ Bar 32
-	note Ds, 1
-	note G_, 1
-	note Fs, 2
-	note D_, 1
-	note G_, 1
-	note G_, 1
-	note G_, 1
-	note Ds, 1
-	note G_, 1
-	note Fs, 2
-	note D_, 1
-	note Fs, 2
-	note G_, 1
+	drum_note 4, 1
+	drum_note 8, 1
+	drum_note 7, 2
+	drum_note 3, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 4, 1
+	drum_note 8, 1
+	drum_note 7, 2
+	drum_note 3, 1
+	drum_note 7, 2
+	drum_note 8, 1
 @ Bar 33
 	sound_call Music_VastPoniCanyon_Ch4_Bar2
 @ Bar 34
@@ -1055,39 +1054,39 @@ Music_VastPoniCanyon_Ch4_Bar27_28:
 	sound_loop 0, Music_VastPoniCanyon_Ch4_loop
 
 Music_VastPoniCanyon_Ch4_Bar2:
-	note Ds, 1@
-	note G_, 1
-	note G_, 1
-	note G_, 1
-	note D_, 1
-	note G_, 1
-	note G_, 1
-	note G_, 1
-	note Ds, 1
-	note G_, 1
-	note G_, 1
-	note G_, 1
-	note D_, 1
-	note G_, 1
-	note G_, 1
-	note G_, 1
+	drum_note 4, 1@ 
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 3, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 4, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 3, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 8, 1
 	sound_ret
 
 Music_VastPoniCanyon_Ch4_Bar27:
-	note Ds, 1@
-	note G_, 1
-	note G_, 1
-	note D_, 1
-	note G_, 1
-	note G_, 1
-	note D_, 1
-	note G_, 1
-	note Ds, 1
-	note G_, 1
-	note Ds, 1
-	note G_, 1
-	note D_, 1
-	note As, 1
-	note As, 1
-	note G_, 1
+	drum_note 4, 1@ 
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 3, 1
+	drum_note 8, 1
+	drum_note 8, 1
+	drum_note 3, 1
+	drum_note 8, 1
+	drum_note 4, 1
+	drum_note 8, 1
+	drum_note 4, 1
+	drum_note 8, 1
+	drum_note 3, 1
+	drum_note 11, 1
+	drum_note 11, 1
+	drum_note 8, 1
 	sound_ret
