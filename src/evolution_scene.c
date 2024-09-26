@@ -34,6 +34,7 @@
 #include "constants/songs.h"
 #include "constants/rgb.h"
 #include "constants/items.h"
+#include "event_data.h"
 
 struct EvoInfo
 {

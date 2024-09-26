@@ -164,9 +164,9 @@ struct SoundChannel
     u16 xpc;
 };
 
-#define MAX_DIRECTSOUND_CHANNELS 12
+#define MAX_DIRECTSOUND_CHANNELS 5
 
-#define PCM_DMA_BUF_SIZE 1584 // size of Direct Sound buffer
+#define PCM_DMA_BUF_SIZE 1568 // size of Direct Sound buffer
 
 struct MusicPlayerInfo;
 
@@ -301,7 +301,8 @@ struct MusicPlayerTrack
     u8 pseudoEchoLength;
     struct SoundChannel *chan;
     struct ToneData tone;
-    u8 gap[10];
+    u8 gbsChannel;
+    u8 gap[9];
     u16 unk_3A;
     u32 unk_3C;
     u8 *cmdPtr;
@@ -338,6 +339,7 @@ struct MusicPlayerInfo
     u16 fadeOI;
     u16 fadeOC;
     u16 fadeOV;
+    u16 gbsTempo;
     struct MusicPlayerTrack *tracks;
     struct ToneData *tone;
     u32 ident;
@@ -362,8 +364,6 @@ struct Song
 
 extern const struct MusicPlayer gMPlayTable[];
 extern const struct Song gSongTable[];
-
-
 
 extern u8 gMPlayMemAccArea[];
 

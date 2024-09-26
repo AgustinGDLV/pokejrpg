@@ -1834,3 +1834,5 @@ const u8 gText_Fertilize[] = _("FERTILIZE");
 const u8 gText_PlantBerry[] = _("PLANT BERRY");
 const u8 gText_AM[] = _("AM");
 const u8 gText_PM[] = _("PM");
+const u8 gText_GBSoundsOn[] = _("Turned on the power for the\nGB SOUNDS!{PAUSE_UNTIL_PRESS}");
+const u8 gText_GBSoundsOff[] = _("Turned off the power for the\nGB SOUNDS!{PAUSE_UNTIL_PRESS}");

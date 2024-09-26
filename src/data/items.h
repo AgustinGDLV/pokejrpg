@@ -14076,4 +14076,22 @@ const struct Item gItemsInfo[] =
         .iconPic = gItemIcon_PokeshiDoll,
         .iconPalette = gItemIconPalette_PokeshiDoll,
     },
+
+// GB Sounds
+
+    [ITEM_GB_SOUNDS] =
+    {
+        .name = _("GB SOUNDS"),
+        .price = 0,
+        .description = COMPOUND_STRING(
+            "Listen to nostalgic\n"
+            "songs with the use\n"
+            "of a single switch."),
+        .importance = 1,
+        .pocket = POCKET_KEY_ITEMS,
+        .type = ITEM_USE_BAG_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_GBSounds,
+        .iconPic = gItemIcon_GBSounds,
+        .iconPalette = gItemIconPalette_GBSounds,
+    },
 };

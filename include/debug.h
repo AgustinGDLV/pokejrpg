@@ -2,6 +2,7 @@
 #define GUARD_DEBUG_H
 
 void Debug_ShowMainMenu(void);
+void CB2_StartSoundCheckMenu(void);
 extern const u8 Debug_FlagsAndVarNotSetBattleConfigMessage[];
 
 extern EWRAM_DATA bool8 gIsDebugBattle;

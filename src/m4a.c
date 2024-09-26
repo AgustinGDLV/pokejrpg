@@ -1,12 +1,16 @@
 #include <string.h>
 #include "gba/m4a_internal.h"
 #include "global.h"
+#include "event_data.h"
+#include "gbs.h"
+#include "constants/flags.h"
 
 extern const u8 gCgb3Vol[];
 
 #define BSS_CODE __attribute__((section(".bss.code")))
 
-BSS_CODE ALIGNED(4) char SoundMainRAM_Buffer[0x800] = {0};
+BSS_CODE ALIGNED(4) char SoundMainRAM_Buffer[0xB40] = {0};
+BSS_CODE ALIGNED(4) u32 SoundMainRAM_MixBuffer[0xE0] = {0};
 
 struct SoundInfo gSoundInfo;
 struct PokemonCrySong gPokemonCrySongs[MAX_POKEMON_CRIES];
@@ -79,7 +83,7 @@ void m4aSoundInit(void)
     m4aSoundMode(SOUND_MODE_DA_BIT_8
                | SOUND_MODE_FREQ_13379
                | (12 << SOUND_MODE_MASVOL_SHIFT)
-               | (5 << SOUND_MODE_MAXCHN_SHIFT));
+               | (MAX_DIRECTSOUND_CHANNELS << SOUND_MODE_MAXCHN_SHIFT));
 
     for (i = 0; i < NUM_MUSIC_PLAYERS; i++)
     {
@@ -107,20 +111,21 @@ void m4aSoundMain(void)
 
 void m4aSongNumStart(u16 n)
 {
-    const struct MusicPlayer *mplayTable = gMPlayTable;
-    const struct Song *songTable = gSongTable;
-    const struct Song *song = &songTable[n];
-    const struct MusicPlayer *mplay = &mplayTable[song->ms];
+#if ENABLE_DEBUG_SOUND_CHECK_MENU == FALSE
+    const struct Song *song = GetSong(n);
+    const struct MusicPlayer *mplay = &gMPlayTable[song->ms];
 
     MPlayStart(mplay->info, song->header);
+#else
+    SongNumStart(n, FlagGet(FLAG_SYS_GBS_ENABLED));
+#endif
 }
 
 void m4aSongNumStartOrChange(u16 n)
 {
-    const struct MusicPlayer *mplayTable = gMPlayTable;
-    const struct Song *songTable = gSongTable;
-    const struct Song *song = &songTable[n];
-    const struct MusicPlayer *mplay = &mplayTable[song->ms];
+#if ENABLE_DEBUG_SOUND_CHECK_MENU == FALSE
+    const struct Song *song = GetSong(n);
+    const struct MusicPlayer *mplay = &gMPlayTable[song->ms];
 
     if (mplay->info->songHeader != song->header)
     {
@@ -134,6 +139,9 @@ void m4aSongNumStartOrChange(u16 n)
             MPlayStart(mplay->info, song->header);
         }
     }
+#else
+    SongNumStartOrChange(n, FlagGet(FLAG_SYS_GBS_ENABLED));
+#endif
 }
 
 void m4aSongNumStartOrContinue(u16 n)
@@ -153,13 +161,15 @@ void m4aSongNumStartOrContinue(u16 n)
 
 void m4aSongNumStop(u16 n)
 {
-    const struct MusicPlayer *mplayTable = gMPlayTable;
-    const struct Song *songTable = gSongTable;
-    const struct Song *song = &songTable[n];
-    const struct MusicPlayer *mplay = &mplayTable[song->ms];
+#if ENABLE_DEBUG_SOUND_CHECK_MENU == FALSE
+    const struct Song *song = GetSong(n);
+    const struct MusicPlayer *mplay = &gMPlayTable[song->ms];
 
     if (mplay->info->songHeader == song->header)
         m4aMPlayStop(mplay->info);
+#else
+    SongNumStop(n, FlagGet(FLAG_SYS_GBS_ENABLED));
+#endif
 }
 
 void m4aSongNumContinue(u16 n)
@@ -616,7 +626,14 @@ void MPlayStart(struct MusicPlayerInfo *mplayInfo, struct SongHeader *songHeader
         mplayInfo->tempoI = 150;
         mplayInfo->tempoU = 0x100;
         mplayInfo->tempoC = 0;
+        mplayInfo->gbsTempo = 0x100;
         mplayInfo->fadeOI = 0;
+
+        // Restore the master volume of the GB channels in case GBS changed it.
+        REG_NR50 = 0x77;
+
+        // Restore bias level.
+        //REG_SOUNDBIAS = (REG_SOUNDBIAS & 0xFC00) | 0x200;
 
         i = 0;
         track = mplayInfo->tracks;
@@ -919,6 +936,8 @@ void CgbSound(void)
     // Most comparision operations that cast to s8 perform 'and' by 0xFF.
     int mask = 0xff;
 
+    gUsedCGBChannels = 0;
+
     if (soundInfo->c15)
         soundInfo->c15--;
     else
@@ -928,6 +947,8 @@ void CgbSound(void)
     {
         if (!(channels->statusFlags & SOUND_CHANNEL_SF_ON))
             continue;
+
+        gUsedCGBChannels |= 1 << (ch - 1);
 
         /* 1. determine hardware channel registers */
         switch (ch)
