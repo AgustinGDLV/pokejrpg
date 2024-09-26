@@ -1735,6 +1735,10 @@ extern const u32 gItemIconPalette_SwapSnack[];
 extern const u32 gItemIcon_TwiceSpicedRadish[];
 extern const u32 gItemIconPalette_TwiceSpicedRadish[];
 
+// New key items
+extern const u32 gItemIcon_GBSounds[];
+extern const u32 gItemIconPalette_GBSounds[];
+
 extern const u32 gItemIcon_ReturnToFieldArrow[];
 extern const u32 gItemIconPalette_ReturnToFieldArrow[];
 

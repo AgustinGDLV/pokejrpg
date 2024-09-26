@@ -13659,6 +13659,8 @@ const struct Item gItemsInfo[] =
     {
         .name = HANDLE_EXPANDED_ITEM_NAME("CornrstneMask", "Cornerstone Mask"),
         .price = 0,
+        .holdEffect = HOLD_EFFECT_OGERPON_MASK,
+        .holdEffectParam = 20,
         .description = COMPOUND_STRING(
             "Allows Ogerpon to\n"
             "wield the Rock-\n"
@@ -13674,6 +13676,8 @@ const struct Item gItemsInfo[] =
     {
         .name = HANDLE_EXPANDED_ITEM_NAME("WellsprngMask", "Wellspring Mask"),
         .price = 0,
+        .holdEffect = HOLD_EFFECT_OGERPON_MASK,
+        .holdEffectParam = 20,
         .description = COMPOUND_STRING(
             "Allows Ogerpon to\n"
             "wield the Water-\n"
@@ -13689,6 +13693,8 @@ const struct Item gItemsInfo[] =
     {
         .name = HANDLE_EXPANDED_ITEM_NAME("HrthflameMask", "Hearthflame Mask"),
         .price = 0,
+        .holdEffect = HOLD_EFFECT_OGERPON_MASK,
+        .holdEffectParam = 20,
         .description = COMPOUND_STRING(
             "Allows Ogerpon to\n"
             "wield the Fire-\n"
@@ -14069,5 +14075,23 @@ const struct Item gItemsInfo[] =
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
         .iconPic = gItemIcon_PokeshiDoll,
         .iconPalette = gItemIconPalette_PokeshiDoll,
+    },
+
+// GB Sounds
+
+    [ITEM_GB_SOUNDS] =
+    {
+        .name = _("GB SOUNDS"),
+        .price = 0,
+        .description = COMPOUND_STRING(
+            "Listen to nostalgic\n"
+            "songs with the use\n"
+            "of a single switch."),
+        .importance = 1,
+        .pocket = POCKET_KEY_ITEMS,
+        .type = ITEM_USE_BAG_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_GBSounds,
+        .iconPic = gItemIcon_GBSounds,
+        .iconPalette = gItemIconPalette_GBSounds,
     },
 };

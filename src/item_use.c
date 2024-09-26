@@ -1491,12 +1491,35 @@ void FieldUseFunc_VsSeeker(u8 taskId)
         SetUpItemUseOnFieldCallback(taskId);
     }
     else
-        DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].data[3]);
+        DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
 }
 
 void Task_ItemUse_CloseMessageBoxAndReturnToField_VsSeeker(u8 taskId)
 {
     Task_CloseCantUseKeyItemMessage(taskId);
+}
+
+void ItemUseOutOfBattle_GBSounds(u8 taskId)
+{
+    const u8 *text;
+    if (FlagGet(FLAG_SYS_GBS_ENABLED))
+    {
+        FlagClear(FLAG_SYS_GBS_ENABLED);
+        text = gText_GBSoundsOff;
+    }
+    else
+    {
+        FlagSet(FLAG_SYS_GBS_ENABLED);
+        text = gText_GBSoundsOn;
+    }
+
+    PlayNewMapMusic(MUS_DUMMY);
+    Overworld_PlaySpecialMapMusic();
+
+    if (gTasks[taskId].tUsingRegisteredKeyItem)
+        DisplayItemMessageOnField(taskId, text, Task_CloseCantUseKeyItemMessage);
+    else
+        DisplayItemMessage(taskId, FONT_NORMAL, text, CloseItemMessage);
 }
 
 #undef tUsingRegisteredKeyItem
