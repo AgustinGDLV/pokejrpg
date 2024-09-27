@@ -29,6 +29,9 @@ extern const struct SongHeader gbs_Music_Route101RSE;
 extern const struct SongHeader gbs_Music_AbandonedShipRSE;
 extern const struct SongHeader gbs_Music_OceanicMuseumRSE;
 
+extern const struct SongHeader gbs_Sfx_Damage;
+extern const struct SongHeader gbs_Sfx_Faint;
+
 extern const struct SongHeader gbs_Music_VastPoniCanyon;
 extern const struct SongHeader gbs_Music_BattleSim;
 extern const struct SongHeader gbs_Music_AlolaWildBattle;

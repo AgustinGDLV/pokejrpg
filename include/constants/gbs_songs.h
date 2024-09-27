@@ -28,10 +28,17 @@
 #define GBS_MUSIC_ABANDONED_SHIP_RSE 20
 #define GBS_MUSIC_OCEANIC_MUSEUM_RSE 21
 
-#define GBS_MUSIC_VAST_PONI_CANYON  22
-#define GBS_MUSIC_BATTLE_SIM        23
-#define GBS_MUSIC_ALOLA_WILD_BATTLE     24
+#define GBS_SFX_START                   21
 
-#define GBS_MUSIC_COUNT 25
+#define GBS_SFX_DAMAGE                  GBS_SFX_START + 1
+#define GBS_SFX_FAINT                   GBS_SFX_START + 2
+
+#define GBS_MUS_START                   GBS_SFX_FAINT
+
+#define GBS_MUSIC_VAST_PONI_CANYON      GBS_MUS_START + 1
+#define GBS_MUSIC_BATTLE_SIM            GBS_MUS_START + 2
+#define GBS_MUSIC_ALOLA_WILD_BATTLE     GBS_MUS_START + 3
+
+#define GBS_MUSIC_COUNT                 GBS_MUSIC_ALOLA_WILD_BATTLE + 1
 
 #endif  // GUARD_CONSTANTS_GBS_SONGS_H
