@@ -2670,48 +2670,42 @@ void SpriteCallbackDummy_2(struct Sprite *sprite)
 
 void SpriteCB_FaintOpponentMon(struct Sprite *sprite)
 {
-    u8 battler = sprite->sBattler;
-    u32 personality = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_PERSONALITY);
-    u16 species;
-    u8 yOffset;
+    LoadCompressedPalette(gSpeciesInfo[sprite->sSpeciesId].palette, OBJ_PLTT_ID(15), PLTT_SIZE_4BPP);
+    sprite->oam.paletteNum = 15;
+    BeginNormalPaletteFade(0x10000 << sprite->oam.paletteNum, 2, 0, 16, RGB_WHITE);
 
-    if (gBattleSpritesDataPtr->battlerData[battler].transformSpecies != 0)
-        species = gBattleSpritesDataPtr->battlerData[battler].transformSpecies;
-    else
-        species = sprite->sSpeciesId;
-
-    species = SanitizeSpeciesId(species);
-    if (species == SPECIES_UNOWN)
-        species = GetUnownSpeciesId(personality);
-    yOffset = gSpeciesInfo[species].frontPicYOffset;
-
-    sprite->data[3] = 8 - yOffset / 8;
-    sprite->data[4] = 1;
+    sprite->oam.objMode = ST_OAM_OBJ_BLEND;
+    sprite->data[3] = 0;
+    sprite->data[4] = 16;
+    sprite->data[5] = 0;
+    
+    SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT2_BG_ALL);
+    SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(sprite->data[4], sprite->data[5]));
     sprite->callback = SpriteCB_AnimFaintOpponent;
 }
 
 static void SpriteCB_AnimFaintOpponent(struct Sprite *sprite)
 {
-    s32 i;
-
-    if (--sprite->data[4] == 0)
+    UpdatePaletteFade();
+    switch (sprite->data[3])
     {
-        sprite->data[4] = 2;
-        sprite->y2 += 8; // Move the sprite down.
-        if (--sprite->data[3] < 0)
-        {
-            FreeSpriteOamMatrix(sprite);
-            DestroySprite(sprite);
-        }
-        else // Erase bottom part of the sprite to create a smooth illusion of mon falling down.
-        {
-            u8 *dst = &gMonSpritesGfxPtr->spritesGfx[GetBattlerPosition(sprite->sBattler)][(sprite->data[3] << 8)];
-
-            for (i = 0; i < 0x100; i++)
-                *(dst++) = 0;
-
-            StartSpriteAnim(sprite, 0);
-        }
+    case 0:
+        ++sprite->data[5];
+        if (sprite->data[5] > 16)
+            sprite->data[5] = 16;
+        break;
+    case 1:
+        --sprite->data[4];
+        if (sprite->data[4] < 0)
+            sprite->data[4] = 0;
+        break;
+    }
+    sprite->data[3] = (sprite->data[3] + 1) % 3;
+    SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(sprite->data[4], sprite->data[5]));
+    if (sprite->data[4] == 0)
+    {
+        FreeSpriteOamMatrix(sprite);
+        DestroySprite(sprite);
     }
 }
 
