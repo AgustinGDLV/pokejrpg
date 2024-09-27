@@ -433,3 +433,42 @@ Sfx_GetBadge_Ch8.loop1:
 	rest 6
 	sound_ret
 
+	.global gbs_Sfx_Damage
+	.align 2
+
+gbs_Sfx_Damage:
+	channel_count 1, 5
+	channel 8, Sfx_Damage_Ch8
+
+gbs_Sfx_Damage_Ch8:
+	gbs_switch 7
+Sfx_Damage_Ch8:
+	noise_note 4, 15, 1, 94
+	noise_note 1, 10, 0, 18
+	noise_note 4, 15, 0, 50
+	noise_note 16, 15, 1, 68
+	sound_ret
+
+	.global gbs_Sfx_Faint
+	.align 2
+
+gbs_Sfx_Faint:
+	channel_count 2, 5
+	channel 5, Sfx_Faint_Ch5
+	channel 8, Sfx_Faint_Ch8
+
+gbs_Sfx_Faint_Ch5:
+	gbs_switch 4
+Sfx_Faint_Ch5:
+	square_note 15, 13, 1, 512
+	pitch_sweep 0, 8
+	sound_ret
+
+gbs_Sfx_Faint_Ch8:
+	gbs_switch 7
+Sfx_Faint_Ch8:
+	noise_note 4, 15, 5, 51
+	noise_note 8, 15, 4, 34
+	noise_note 15, 15, 2, 33
+	sound_ret
+

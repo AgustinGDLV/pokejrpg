@@ -16,10 +16,10 @@ gSongTable::
 	song se_ledge, 1, 0
 	song se_bike_bell, 1, 0
 	song se_not_effective, 1, 0
-	song se_effective, 1, 0
+	song se_effective, 1, GBS_SFX_DAMAGE
 	song se_super_effective, 1, 0
 	song se_ball_open, 1, 0
-	song se_faint, 1, 0
+	song se_faint, 1, GBS_SFX_FAINT
 	song se_flee, 1, 0
 	song se_sliding_door, 1, 0
 	song se_ship, 1, 0
