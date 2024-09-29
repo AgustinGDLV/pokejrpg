@@ -253,17 +253,9 @@ void CreateBattlerSprite(u32 battler)
         }
         else
         {
-            if (!IsValidForBattle(&gPlayerParty[gBattlerPartyIndexes[battler]]))
-                return;
-
-            SetMultiuseSpriteTemplateToPokemon(GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES), GetBattlerPosition(battler));
-            gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, GetBattlerSpriteCoord(battler, BATTLER_COORD_X_2), posY, GetBattlerSpriteSubpriority(battler));
-            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
-            gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;
-            gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
-            gSprites[gBattlerSpriteIds[battler]].data[2] = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES);
-
-            StartSpriteAnim(&gSprites[gBattlerSpriteIds[battler]], 0);
+            // *TODO
+            gBattlerSpriteIds[battler] = 0xFF;
+            return;
         }
 
         gSprites[gBattlerSpriteIds[battler]].invisible = gBattleSpritesDataPtr->battlerData[battler].invisible;
