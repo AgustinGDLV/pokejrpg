@@ -2113,36 +2113,41 @@ static bool8 ShouldDoSlideInAnim(void)
 
 void StartSendOutAnim(u32 battler, bool32 dontClearSubstituteBit, bool32 doSlideIn)
 {
-    u16 species;
-    u32 side = GetBattlerSide(battler);
+    // *TODO
     struct Pokemon *party = GetBattlerParty(battler);
+    gBattleSpritesDataPtr->healthBoxesData[battler].ballAnimActive = FALSE;
+    UpdateHealthboxAttribute(gHealthboxSpriteIds[battler], &party[gBattlerPartyIndexes[battler]], HEALTHBOX_ALL);
+    return;
 
-    ClearTemporarySpeciesSpriteData(battler, dontClearSubstituteBit);
-    gBattlerPartyIndexes[battler] = gBattleResources->bufferA[battler][1];
-    species = GetIllusionMonSpecies(battler);
-    if (species == SPECIES_NONE)
-        species = GetMonData(&party[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES);
-    gBattleControllerData[battler] = CreateInvisibleSpriteWithCallback(SpriteCB_WaitForBattlerBallReleaseAnim);
-    // Load sprite for opponent only, player sprite is expected to be already loaded.
-    if (side == B_SIDE_OPPONENT)
-        BattleLoadMonSpriteGfx(&party[gBattlerPartyIndexes[battler]], battler);
-    SetMultiuseSpriteTemplateToPokemon(species, GetBattlerPosition(battler));
+    // u16 species;
+    // u32 side = GetBattlerSide(battler);
 
-    gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate,
-                                        GetBattlerSpriteCoord(battler, BATTLER_COORD_X_2),
-                                        GetBattlerSpriteDefault_Y(battler),
-                                        GetBattlerSpriteSubpriority(battler));
+    // ClearTemporarySpeciesSpriteData(battler, dontClearSubstituteBit);
+    // gBattlerPartyIndexes[battler] = gBattleResources->bufferA[battler][1];
+    // species = GetIllusionMonSpecies(battler);
+    // if (species == SPECIES_NONE)
+    //     species = GetMonData(&party[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES);
+    // gBattleControllerData[battler] = CreateInvisibleSpriteWithCallback(SpriteCB_WaitForBattlerBallReleaseAnim);
+    // // Load sprite for opponent only, player sprite is expected to be already loaded.
+    // if (side == B_SIDE_OPPONENT)
+    //     BattleLoadMonSpriteGfx(&party[gBattlerPartyIndexes[battler]], battler);
+    // SetMultiuseSpriteTemplateToPokemon(species, GetBattlerPosition(battler));
 
-    gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
-    gSprites[gBattlerSpriteIds[battler]].data[2] = species;
-    gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
-    StartSpriteAnim(&gSprites[gBattlerSpriteIds[battler]], 0);
-    gSprites[gBattlerSpriteIds[battler]].invisible = TRUE;
-    gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;
+    // gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate,
+    //                                     GetBattlerSpriteCoord(battler, BATTLER_COORD_X_2),
+    //                                     GetBattlerSpriteDefault_Y(battler),
+    //                                     GetBattlerSpriteSubpriority(battler));
 
-    gSprites[gBattleControllerData[battler]].data[1] = gBattlerSpriteIds[battler];
-    gSprites[gBattleControllerData[battler]].data[2] = battler;
-    gSprites[gBattleControllerData[battler]].data[0] = DoPokeballSendOutAnimation(battler, 0, (side == B_SIDE_OPPONENT) ? POKEBALL_OPPONENT_SENDOUT : (doSlideIn ? POKEBALL_PLAYER_SLIDEIN : POKEBALL_PLAYER_SENDOUT));
+    // gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
+    // gSprites[gBattlerSpriteIds[battler]].data[2] = species;
+    // gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
+    // StartSpriteAnim(&gSprites[gBattlerSpriteIds[battler]], 0);
+    // gSprites[gBattlerSpriteIds[battler]].invisible = TRUE;
+    // gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;
+
+    // gSprites[gBattleControllerData[battler]].data[1] = gBattlerSpriteIds[battler];
+    // gSprites[gBattleControllerData[battler]].data[2] = battler;
+    // gSprites[gBattleControllerData[battler]].data[0] = DoPokeballSendOutAnimation(battler, 0, (side == B_SIDE_OPPONENT) ? POKEBALL_OPPONENT_SENDOUT : (doSlideIn ? POKEBALL_PLAYER_SLIDEIN : POKEBALL_PLAYER_SENDOUT));
 }
 
 static void FreeMonSprite(u32 battler)
@@ -2176,8 +2181,9 @@ static void Controller_ReturnMonToBall(u32 battler)
     case 1:
         if (!gBattleSpritesDataPtr->healthBoxesData[battler].specialAnimActive)
         {
-            gBattleSpritesDataPtr->healthBoxesData[battler].animationState = 0;
-            InitAndLaunchSpecialAnimation(battler, battler, battler, (GetBattlerSide(battler) == B_SIDE_OPPONENT) ? B_ANIM_SWITCH_OUT_OPPONENT_MON : B_ANIM_SWITCH_OUT_PLAYER_MON);
+            // *TODO
+            // gBattleSpritesDataPtr->healthBoxesData[battler].animationState = 0;
+            // InitAndLaunchSpecialAnimation(battler, battler, battler, (GetBattlerSide(battler) == B_SIDE_OPPONENT) ? B_ANIM_SWITCH_OUT_OPPONENT_MON : B_ANIM_SWITCH_OUT_PLAYER_MON);
             gBattlerControllerFuncs[battler] = Controller_ReturnMonToBall2;
         }
         break;
@@ -2461,11 +2467,12 @@ void BtlController_HandleLoadMonSprite(u32 battler, void (*controllerCallback)(u
 
 void BtlController_HandleSwitchInAnim(u32 battler, bool32 isPlayerSide, void (*controllerCallback)(u32 battler))
 {
-    if (isPlayerSide)
-        ClearTemporarySpeciesSpriteData(battler, gBattleResources->bufferA[battler][2]);
+    // *TODO
+    // if (isPlayerSide)
+    //     ClearTemporarySpeciesSpriteData(battler, gBattleResources->bufferA[battler][2]);
     gBattlerPartyIndexes[battler] = gBattleResources->bufferA[battler][1];
-    if (isPlayerSide)
-        BattleLoadMonSpriteGfx(&gPlayerParty[gBattlerPartyIndexes[battler]], battler);
+    // if (isPlayerSide)
+    //     BattleLoadMonSpriteGfx(&gPlayerParty[gBattlerPartyIndexes[battler]], battler);
     StartSendOutAnim(battler, gBattleResources->bufferA[battler][2], FALSE);
     gBattlerControllerFuncs[battler] = controllerCallback;
 }
@@ -2479,7 +2486,8 @@ void BtlController_HandleReturnMonToBall(u32 battler)
     }
     else
     {
-        FreeMonSprite(battler);
+        // *TODO
+        // FreeMonSprite(battler);
         BattleControllerComplete(battler);
     }
 }

@@ -956,6 +956,9 @@ bool8 IsBattlerSpriteVisible(u8 battlerId)
         else
             return FALSE;
     }
+    // *TODO
+    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
+        return FALSE;
     if (!IsBattlerSpritePresent(battlerId))
         return FALSE;
     if (IsContest())

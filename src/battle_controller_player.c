@@ -1387,11 +1387,12 @@ static void SwitchIn_TryShinyAnimShowHealthbox(u32 battler)
     if (gSprites[gBattleControllerData[battler]].callback == SpriteCallbackDummy
      && !gBattleSpritesDataPtr->healthBoxesData[battler].ballAnimActive)
     {
-        DestroySprite(&gSprites[gBattleControllerData[battler]]);
+        // *TODO
+        // DestroySprite(&gSprites[gBattleControllerData[battler]]);
         UpdateHealthboxAttribute(gHealthboxSpriteIds[battler], &gPlayerParty[gBattlerPartyIndexes[battler]], HEALTHBOX_ALL);
-        StartHealthboxSlideIn(battler);
+        // StartHealthboxSlideIn(battler);
         SetHealthboxSpriteVisible(gHealthboxSpriteIds[battler]);
-        gBattlerControllerFuncs[battler] = SwitchIn_CleanShinyAnimShowSubstitute;
+        gBattlerControllerFuncs[battler] = SwitchIn_HandleSoundAndEnd;
     }
 }
 
