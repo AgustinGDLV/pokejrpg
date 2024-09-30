@@ -744,10 +744,6 @@ bool8 BattleInitAllSprites(u8 *state1, u8 *battler)
             if (!(gBattleTypeFlags & BATTLE_TYPE_SAFARI))
                 UpdateHealthboxAttribute(gHealthboxSpriteIds[*battler], &gPlayerParty[gBattlerPartyIndexes[*battler]], HEALTHBOX_ALL);
         }
-        else
-        {
-            UpdateHealthboxAttribute(gHealthboxSpriteIds[*battler], &gEnemyParty[gBattlerPartyIndexes[*battler]], HEALTHBOX_ALL);
-        }
         SetHealthboxSpriteInvisible(gHealthboxSpriteIds[*battler]);
         (*battler)++;
         if (*battler == gBattlersCount)
@@ -757,7 +753,6 @@ bool8 BattleInitAllSprites(u8 *state1, u8 *battler)
         }
         break;
     case 6:
-        gBattlerSpriteIds[0] = 0xFF; // *TODO
         LoadAndCreateEnemyShadowSprites();
         BufferBattlePartyCurrentOrder();
         retVal = TRUE;

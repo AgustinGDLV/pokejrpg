@@ -637,8 +637,8 @@ u8 CreateBattlerHealthboxSprites(u8 battlerId)
     if (GetBattlerSide(battlerId) == B_SIDE_OPPONENT)
         return 0xFF;
 
-    healthboxLeftSpriteId = CreateSprite(&sHealthboxSpriteTemplates[0], DISPLAY_WIDTH, DISPLAY_HEIGHT, 1);
-    healthboxRightSpriteId = CreateSpriteAtEnd(&sHealthboxSpriteTemplates[0], DISPLAY_WIDTH, DISPLAY_HEIGHT, 1);
+    healthboxLeftSpriteId = CreateSprite(&sHealthboxSpriteTemplates[battlerId / 2], DISPLAY_WIDTH, DISPLAY_HEIGHT, 1);
+    healthboxRightSpriteId = CreateSpriteAtEnd(&sHealthboxSpriteTemplates[battlerId / 2], DISPLAY_WIDTH, DISPLAY_HEIGHT, 1);
 
     gSprites[healthboxLeftSpriteId].oam.shape = ST_OAM_SQUARE;
 
@@ -651,10 +651,13 @@ u8 CreateBattlerHealthboxSprites(u8 battlerId)
 
     gSprites[healthboxLeftSpriteId].hMain_Battler = battlerId;
 
-    CreateIndicatorSprite(battlerId);
+    // *TODO
+    // CreateIndicatorSprite(battlerId);
 
     gBattleStruct->ballSpriteIds[0] = MAX_SPRITES;
     gBattleStruct->ballSpriteIds[1] = MAX_SPRITES;
+
+    gBattlerSpriteIds[battlerId] = 0xFF; // *TODO
 
     return healthboxLeftSpriteId;
 }
@@ -818,7 +821,7 @@ void GetBattlerHealthboxCoords(u8 battler, s16 *x, s16 *y)
             *x = 32, *y = 128;
             break;
         case B_POSITION_PLAYER_RIGHT:
-            *x = 171, *y = 101;
+            *x = 32 + 80, *y = 128;
             break;
         case B_POSITION_OPPONENT_LEFT:
             *x = 44, *y = 19;
@@ -982,14 +985,7 @@ void UpdateHpTextInHealthbox(u32 healthboxSpriteId, u32 maxOrCurrent, s16 currHp
 {
     // *TODO
     u32 battlerId = gSprites[healthboxSpriteId].hMain_Battler;
-    if (WhichBattleCoords(battlerId))
-    {
-        UpdateHpTextInHealthboxInDoubles(healthboxSpriteId, maxOrCurrent, currHp, maxHp);
-    }
-    else // Single Battle
-    {
-        PrintHpOnHealthbox(healthboxSpriteId, currHp, maxHp);
-    }
+    PrintHpOnHealthbox(healthboxSpriteId, currHp, maxHp);
 }
 
 static void UpdateHpTextInHealthboxInDoubles(u32 healthboxSpriteId, u32 maxOrCurrent, s16 currHp, s16 maxHp)
