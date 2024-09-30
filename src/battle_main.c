@@ -2800,6 +2800,9 @@ void DoBounceEffect(u8 battler, u8 which, s8 delta, s8 amplitude)
     u8 invisibleSpriteId;
     u8 bouncerSpriteId;
 
+    if (battler == B_POSITION_PLAYER_MIDDLE)
+        return;
+
     switch (which)
     {
     case BOUNCE_HEALTHBOX:
@@ -3394,7 +3397,7 @@ static void DoBattleIntro(void)
     s32 i;
     u32 battler;
     u8 *state = &gBattleStruct->introState;
-
+    DebugPrintf("State: %d", *state);
     switch (*state)
     {
     case 0: // Get Data of all battlers.
@@ -3456,44 +3459,16 @@ static void DoBattleIntro(void)
                 #endif
             }
 
-            // Draw sprite.
-            switch (GetBattlerPosition(battler))
+            if (GetBattlerSide(battler) == B_SIDE_OPPONENT && IsBattlerAlive(battler))
             {
-            case B_POSITION_OPPONENT_LEFT:
-                if (gBattleTypeFlags & BATTLE_TYPE_TRAINER) // opponent 1 sprite
-                {
-                    BtlController_EmitDrawTrainerPic(battler, BUFFER_A);
-                    MarkBattlerForControllerExec(battler);
-                }
-                else // wild mon 1
-                {
-                    BtlController_EmitLoadMonSprite(battler, BUFFER_A);
-                    MarkBattlerForControllerExec(battler);
-                    gBattleResults.lastOpponentSpecies = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES, NULL);
-                }
-                break;
-            case B_POSITION_OPPONENT_RIGHT:
-                if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-                {
-                    if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS) && !BATTLE_TWO_VS_ONE_OPPONENT) // opponent 2 if exists
-                    {
-                        BtlController_EmitDrawTrainerPic(battler, BUFFER_A);
-                        MarkBattlerForControllerExec(battler);
-                    }
-                }
-                else if (IsBattlerAlive(battler)) // wild mon 2 if alive
-                {
-                    BtlController_EmitLoadMonSprite(battler, BUFFER_A);
-                    MarkBattlerForControllerExec(battler);
-                    gBattleResults.lastOpponentSpecies = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES, NULL);
-                }
-                break;
+                BtlController_EmitLoadMonSprite(battler, BUFFER_A);
+                MarkBattlerForControllerExec(battler);
+                gBattleResults.lastOpponentSpecies = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES, NULL);
             }
 
             if (gBattleTypeFlags & BATTLE_TYPE_ARENA)
                 BattleArena_InitPoints();
         }
-
         (*state)++;
         break;
     case 5: // wait for previous action to complete

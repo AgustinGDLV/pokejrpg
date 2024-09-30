@@ -93,7 +93,8 @@
 #define RFU_API_BUFF_SIZE_RAM           0x0e64             // Necessary size for buffer specified by rfu_initializeAPI (fast communication version that operates the library SIO interrupt routines in RAM)
 #define RFU_API_BUFF_SIZE_ROM           0x0504             // Necessary size for buffer specified by rfu_initializeAPI (fast communication version that operates the library SIO interrupt routines in ROM)
 
-#define RFU_CHILD_MAX                   4                  // Maximum number of slaves that can be connected to one parent device
+// *TODO -- link nonsense
+#define RFU_CHILD_MAX                   7                  // Maximum number of slaves that can be connected to one parent device
 
 #define RFU_GAME_NAME_LENGTH            13                 // Possible length of game name set by rfu_REQB_configGameData
 #define RFU_USER_NAME_LENGTH            8                  // Possible length of user name set by rfu_REQB_configGameData

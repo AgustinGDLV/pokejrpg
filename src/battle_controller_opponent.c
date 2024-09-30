@@ -306,6 +306,7 @@ static void Intro_TryShinyAnimShowHealthbox(u32 battler)
 
 static void TryShinyAnimAfterMonAnim(u32 battler)
 {
+    DebugPrintf("1 - battler: %d", battler);
     if (gSprites[gBattlerSpriteIds[battler]].x2 == 0
         && !gBattleSpritesDataPtr->healthBoxesData[battler].triedShinyMonAnim
         && !gBattleSpritesDataPtr->healthBoxesData[battler].finishedShinyMonAnim)
@@ -319,6 +320,7 @@ static void TryShinyAnimAfterMonAnim(u32 battler)
         FreeSpriteTilesByTag(ANIM_TAG_GOLD_STARS);
         FreeSpritePaletteByTag(ANIM_TAG_GOLD_STARS);
         OpponentBufferExecCompleted(battler);
+        DebugPrintf("2 - battler: %d", battler);
     }
 }
 
@@ -396,6 +398,7 @@ static void OpponentBufferExecCompleted(u32 battler)
 
 static void OpponentHandleLoadMonSprite(u32 battler)
 {
+    DebugPrintf("0 - battler: %d", battler);
     BtlController_HandleLoadMonSprite(battler, TryShinyAnimAfterMonAnim);
 }
 

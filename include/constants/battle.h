@@ -23,16 +23,22 @@
  *   +---------------------------+
  */
 
-#define MAX_BATTLERS_COUNT  4
+#define MAX_BATTLERS_COUNT      8
+#define MAX_PLAYER_BATTLERS     3
+#define MAX_OPPONENT_BATTLERS   5
 
 #define B_POSITION_PLAYER_LEFT        0
-#define B_POSITION_OPPONENT_LEFT      1
+#define B_POSITION_PLAYER_MIDDLE      1
 #define B_POSITION_PLAYER_RIGHT       2
-#define B_POSITION_OPPONENT_RIGHT     3
+#define B_POSITION_OPPONENT_LEFT      3
+#define B_POSITION_OPPONENT_RIGHT     4
+#define B_POSITION_OPPONENT_3         5
+#define B_POSITION_OPPONENT_4         6
+#define B_POSITION_OPPONENT_5         7
 
 // These macros can be used with either battler ID or positions to get the partner or the opposite mon
 #define BATTLE_OPPOSITE(id) ((id) ^ BIT_SIDE)
-#define BATTLE_PARTNER(id) ((id) ^ BIT_FLANK)
+#define BATTLE_PARTNER(id) ((id) ^ 1) // *TODO -- rework
 
 #define B_SIDE_PLAYER     0
 #define B_SIDE_OPPONENT   1

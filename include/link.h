@@ -2,7 +2,7 @@
 #define GUARD_LINK_H
 
 #define MAX_LINK_PLAYERS 4
-#define MAX_RFU_PLAYERS 5
+#define MAX_RFU_PLAYERS 8 // *TODO -- link nonsense
 #define CMD_LENGTH 8
 #define QUEUE_CAPACITY 50
 #define OVERWORLD_RECV_QUEUE_MAX 3

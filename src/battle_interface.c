@@ -630,15 +630,15 @@ u32 WhichBattleCoords(u32 battlerId) // 0 - singles, 1 - doubles
         return IsDoubleBattle();
 }
 
-u8 CreateBattlerHealthboxSprites(u8 battlerId)
+u8 CreateBattlerHealthboxSprites(u8 battler)
 {
     u8 healthboxLeftSpriteId, healthboxRightSpriteId;
 
-    if (GetBattlerSide(battlerId) == B_SIDE_OPPONENT)
+    if (GetBattlerSide(battler) == B_SIDE_OPPONENT)
         return 0xFF;
 
-    healthboxLeftSpriteId = CreateSprite(&sHealthboxSpriteTemplates[battlerId / 2], DISPLAY_WIDTH, DISPLAY_HEIGHT, 1);
-    healthboxRightSpriteId = CreateSpriteAtEnd(&sHealthboxSpriteTemplates[battlerId / 2], DISPLAY_WIDTH, DISPLAY_HEIGHT, 1);
+    healthboxLeftSpriteId = CreateSprite(&sHealthboxSpriteTemplates[battler], DISPLAY_WIDTH, DISPLAY_HEIGHT, 1);
+    healthboxRightSpriteId = CreateSpriteAtEnd(&sHealthboxSpriteTemplates[battler], DISPLAY_WIDTH, DISPLAY_HEIGHT, 1);
 
     gSprites[healthboxLeftSpriteId].oam.shape = ST_OAM_SQUARE;
 
@@ -649,15 +649,15 @@ u8 CreateBattlerHealthboxSprites(u8 battlerId)
     gSprites[healthboxRightSpriteId].hOther_HealthBoxSpriteId = healthboxLeftSpriteId;
     gSprites[healthboxRightSpriteId].callback = SpriteCB_HealthBoxOther;
 
-    gSprites[healthboxLeftSpriteId].hMain_Battler = battlerId;
+    gSprites[healthboxLeftSpriteId].hMain_Battler = battler;
 
     // *TODO
-    // CreateIndicatorSprite(battlerId);
+    // CreateIndicatorSprite(battler);
 
     gBattleStruct->ballSpriteIds[0] = MAX_SPRITES;
     gBattleStruct->ballSpriteIds[1] = MAX_SPRITES;
 
-    gBattlerSpriteIds[battlerId] = 0xFF; // *TODO
+    gBattlerSpriteIds[battler] = 0xFF; // *TODO
 
     return healthboxLeftSpriteId;
 }
@@ -806,31 +806,12 @@ void GetBattlerHealthboxCoords(u8 battler, s16 *x, s16 *y)
 {
     *x = 0, *y = 0;
 
-    if (!WhichBattleCoords(battler))
-    {
-        if (GetBattlerSide(battler) != B_SIDE_PLAYER)
-            *x = 44, *y = 30;
-        else
-            *x = 32, *y = 128;
-    }
-    else
-    {
-        switch (GetBattlerPosition(battler))
-        {
-        case B_POSITION_PLAYER_LEFT:
-            *x = 32, *y = 128;
-            break;
-        case B_POSITION_PLAYER_RIGHT:
-            *x = 32 + 80, *y = 128;
-            break;
-        case B_POSITION_OPPONENT_LEFT:
-            *x = 44, *y = 19;
-            break;
-        case B_POSITION_OPPONENT_RIGHT:
-            *x = 32, *y = 44;
-            break;
-        }
-    }
+    if (GetBattlerSide(battler) == B_SIDE_OPPONENT)
+        return;
+
+    u32 offset = 80 - 40 * (gPlayerPartyCount - 1);
+    *x = 32 + 80 * battler + offset;
+    *y = 128;
 }
 
 void InitBattlerHealthboxCoords(u8 battler)
