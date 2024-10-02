@@ -48,11 +48,11 @@
 #define SPRITES_INIT_STATE1     1 // shares the Id as well
 #define SPRITES_INIT_STATE2     2
 #define MOVE_EFFECT_BYTE        3
-#define ACTIONS_CONFIRMED_COUNT 4
-#define MULTISTRING_CHOOSER     5
-#define MISS_TYPE               6
-#define MSG_DISPLAY             7
-#define BATTLE_COMMUNICATION_ENTRIES_COUNT  8
+#define ACTIONS_CONFIRMED_COUNT 8 // 0 - 7 are used to store battler actions during selection
+#define MULTISTRING_CHOOSER     9
+#define MISS_TYPE               10
+#define MSG_DISPLAY             11
+#define BATTLE_COMMUNICATION_ENTRIES_COUNT  12
 
 #define cMULTISTRING_CHOOSER (gBattleCommunication + MULTISTRING_CHOOSER)
 #define cMISS_TYPE           (gBattleCommunication + MISS_TYPE)

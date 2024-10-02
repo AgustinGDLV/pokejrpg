@@ -2800,9 +2800,6 @@ void DoBounceEffect(u8 battler, u8 which, s8 delta, s8 amplitude)
     u8 invisibleSpriteId;
     u8 bouncerSpriteId;
 
-    if (battler == B_POSITION_PLAYER_MIDDLE)
-        return;
-
     switch (which)
     {
     case BOUNCE_HEALTHBOX:
@@ -3397,7 +3394,6 @@ static void DoBattleIntro(void)
     s32 i;
     u32 battler;
     u8 *state = &gBattleStruct->introState;
-    DebugPrintf("State: %d", *state);
     switch (*state)
     {
     case 0: // Get Data of all battlers.
@@ -3932,7 +3928,7 @@ enum
 
 static void HandleTurnActionSelectionState(void)
 {
-    s32 i, battler;
+    s32 i, battler, partner;
 
     gBattleCommunication[ACTIONS_CONFIRMED_COUNT] = 0;
     for (battler = 0; battler < gBattlersCount; battler++)
@@ -3956,11 +3952,9 @@ static void HandleTurnActionSelectionState(void)
             }
             // fallthrough
         case STATE_BEFORE_ACTION_CHOSEN: // Choose an action.
-            *(gBattleStruct->monToSwitchIntoId + battler) = PARTY_SIZE;
-            if (gBattleTypeFlags & BATTLE_TYPE_MULTI
-                || (position & BIT_FLANK) == B_FLANK_LEFT
-                || gBattleStruct->absentBattlerFlags & gBitTable[GetBattlerAtPosition(BATTLE_PARTNER(position))]
-                || gBattleCommunication[GetBattlerAtPosition(BATTLE_PARTNER(position))] == STATE_WAIT_ACTION_CONFIRMED)
+            gBattleStruct->monToSwitchIntoId[battler] = PARTY_SIZE;
+            partner = GetAliveLeftPartner(battler);
+            if (partner == battler || gBattleCommunication[partner] == STATE_WAIT_ACTION_CONFIRMED)
             {
                 if (gBattleStruct->absentBattlerFlags & gBitTable[battler])
                 {
@@ -3978,7 +3972,7 @@ static void HandleTurnActionSelectionState(void)
                         gChosenActionByBattler[battler] = B_ACTION_USE_MOVE;
                         gBattleCommunication[battler] = STATE_WAIT_ACTION_CONFIRMED_STANDBY;
                     }
-                    else if (WILD_DOUBLE_BATTLE
+                    else if (WILD_DOUBLE_BATTLE // *TODO - AI handling probably
                              && position == B_POSITION_PLAYER_RIGHT
                              && (gBattleStruct->throwingPokeBall || gChosenActionByBattler[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] == B_ACTION_RUN)
                              && gChosenActionByBattler[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] != B_ACTION_NOTHING_FAINTED)
@@ -4009,15 +4003,15 @@ static void HandleTurnActionSelectionState(void)
                     if (AreAllMovesUnusable(battler))
                     {
                         gBattleCommunication[battler] = STATE_SELECTION_SCRIPT;
-                        *(gBattleStruct->selectionScriptFinished + battler) = FALSE;
-                        *(gBattleStruct->stateIdAfterSelScript + battler) = STATE_WAIT_ACTION_CONFIRMED_STANDBY;
-                        *(gBattleStruct->moveTarget + battler) = gBattleResources->bufferB[battler][3];
+                        gBattleStruct->selectionScriptFinished[battler] = FALSE;
+                        gBattleStruct->stateIdAfterSelScript[battler] = STATE_WAIT_ACTION_CONFIRMED_STANDBY;
+                        gBattleStruct->moveTarget[battler] = gBattleResources->bufferB[battler][3];
                         return;
                     }
                     else if (gDisableStructs[battler].encoredMove != 0)
                     {
                         gChosenMoveByBattler[battler] = gDisableStructs[battler].encoredMove;
-                        *(gBattleStruct->chosenMovePositions + battler) = gDisableStructs[battler].encoredMovePos;
+                        gBattleStruct->chosenMovePositions[battler] = gDisableStructs[battler].encoredMovePos;
                         gBattleCommunication[battler] = STATE_WAIT_ACTION_CONFIRMED_STANDBY;
                         return;
                     }
@@ -4051,8 +4045,8 @@ static void HandleTurnActionSelectionState(void)
                         RecordedBattle_ClearBattlerAction(battler, 1);
                         gSelectionBattleScripts[battler] = BattleScript_ActionSelectionItemsCantBeUsed;
                         gBattleCommunication[battler] = STATE_SELECTION_SCRIPT;
-                        *(gBattleStruct->selectionScriptFinished + battler) = FALSE;
-                        *(gBattleStruct->stateIdAfterSelScript + battler) = STATE_BEFORE_ACTION_CHOSEN;
+                        gBattleStruct->selectionScriptFinished[battler] = FALSE;
+                        gBattleStruct->stateIdAfterSelScript[battler] = STATE_BEFORE_ACTION_CHOSEN;
                         return;
                     }
 
@@ -4067,8 +4061,8 @@ static void HandleTurnActionSelectionState(void)
                         RecordedBattle_ClearBattlerAction(battler, 1);
                         gSelectionBattleScripts[battler] = BattleScript_ActionSelectionItemsCantBeUsed;
                         gBattleCommunication[battler] = STATE_SELECTION_SCRIPT;
-                        *(gBattleStruct->selectionScriptFinished + battler) = FALSE;
-                        *(gBattleStruct->stateIdAfterSelScript + battler) = STATE_BEFORE_ACTION_CHOSEN;
+                        gBattleStruct->selectionScriptFinished[battler] = FALSE;
+                        gBattleStruct->stateIdAfterSelScript[battler] = STATE_BEFORE_ACTION_CHOSEN;
                         return;
                     }
                     else
@@ -4078,7 +4072,7 @@ static void HandleTurnActionSelectionState(void)
                     }
                     break;
                 case B_ACTION_SWITCH:
-                    *(gBattleStruct->battlerPartyIndexes + battler) = gBattlerPartyIndexes[battler];
+                    gBattleStruct->battlerPartyIndexes[battler] = gBattlerPartyIndexes[battler];
                     if (gBattleTypeFlags & BATTLE_TYPE_ARENA
                         || !CanBattlerEscape(battler))
                     {
@@ -4105,8 +4099,8 @@ static void HandleTurnActionSelectionState(void)
                     {
                         gSelectionBattleScripts[battler] = BattleScript_PrintFullBox;
                         gBattleCommunication[battler] = STATE_SELECTION_SCRIPT;
-                        *(gBattleStruct->selectionScriptFinished + battler) = FALSE;
-                        *(gBattleStruct->stateIdAfterSelScript + battler) = STATE_BEFORE_ACTION_CHOSEN;
+                        gBattleStruct->selectionScriptFinished[battler] = FALSE;
+                        gBattleStruct->stateIdAfterSelScript[battler] = STATE_BEFORE_ACTION_CHOSEN;
                         return;
                     }
                     break;
@@ -4115,14 +4109,15 @@ static void HandleTurnActionSelectionState(void)
                     MarkBattlerForControllerExec(battler);
                     break;
                 case B_ACTION_CANCEL_PARTNER:
+                    partner = GetAliveLeftPartner(battler);
                     gBattleCommunication[battler] = STATE_WAIT_SET_BEFORE_ACTION;
-                    gBattleCommunication[GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(battler)))] = STATE_BEFORE_ACTION_CHOSEN;
+                    gBattleCommunication[partner] = STATE_BEFORE_ACTION_CHOSEN;
                     RecordedBattle_ClearBattlerAction(battler, 1);
-                    if (gBattleMons[GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(battler)))].status2 & STATUS2_MULTIPLETURNS
-                        || gBattleMons[GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(battler)))].status2 & STATUS2_RECHARGE)
+                    if (gBattleMons[partner].status2 & STATUS2_MULTIPLETURNS
+                        || gBattleMons[partner].status2 & STATUS2_RECHARGE)
                     {
                         BtlController_EmitEndBounceEffect(battler, BUFFER_A);
-                        MarkBattlerForControllerExec(battler);
+                        MarkBattlerForControllerExec(battler); // *TODO - handling for multiple partners
                         return;
                     }
                     else if (gChosenActionByBattler[GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(battler)))] == B_ACTION_SWITCH)
@@ -4150,7 +4145,7 @@ static void HandleTurnActionSelectionState(void)
                         RecordedBattle_ClearBattlerAction(GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(battler))), 3);
                     }
 
-                    gBattleStruct->gimmick.toActivate &= ~(gBitTable[BATTLE_PARTNER(GetBattlerPosition(battler))]);
+                    gBattleStruct->gimmick.toActivate &= ~(gBitTable[partner]);
                     BtlController_EmitEndBounceEffect(battler, BUFFER_A);
                     MarkBattlerForControllerExec(battler);
                     return;
@@ -4166,8 +4161,8 @@ static void HandleTurnActionSelectionState(void)
                 {
                     gSelectionBattleScripts[battler] = BattleScript_AskIfWantsToForfeitMatch;
                     gBattleCommunication[battler] = STATE_SELECTION_SCRIPT_MAY_RUN;
-                    *(gBattleStruct->selectionScriptFinished + battler) = FALSE;
-                    *(gBattleStruct->stateIdAfterSelScript + battler) = STATE_BEFORE_ACTION_CHOSEN;
+                    gBattleStruct->selectionScriptFinished[battler] = FALSE;
+                    gBattleStruct->stateIdAfterSelScript[battler] = STATE_BEFORE_ACTION_CHOSEN;
                     return;
                 }
                 else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
@@ -4182,8 +4177,8 @@ static void HandleTurnActionSelectionState(void)
                 {
                     gSelectionBattleScripts[battler] = BattleScript_PrintCantEscapeFromBattle;
                     gBattleCommunication[battler] = STATE_SELECTION_SCRIPT;
-                    *(gBattleStruct->selectionScriptFinished + battler) = FALSE;
-                    *(gBattleStruct->stateIdAfterSelScript + battler) = STATE_BEFORE_ACTION_CHOSEN;
+                    gBattleStruct->selectionScriptFinished[battler] = FALSE;
+                    gBattleStruct->stateIdAfterSelScript[battler] = STATE_BEFORE_ACTION_CHOSEN;
                     return;
                 }
                 else
@@ -4224,9 +4219,9 @@ static void HandleTurnActionSelectionState(void)
                         {
                             RecordedBattle_ClearBattlerAction(battler, 1);
                             gBattleCommunication[battler] = STATE_SELECTION_SCRIPT;
-                            *(gBattleStruct->selectionScriptFinished + battler) = FALSE;
+                            gBattleStruct->selectionScriptFinished[battler] = FALSE;
                             gBattleResources->bufferB[battler][1] = B_ACTION_USE_MOVE;
-                            *(gBattleStruct->stateIdAfterSelScript + battler) = STATE_WAIT_ACTION_CHOSEN;
+                            gBattleStruct->stateIdAfterSelScript[battler] = STATE_WAIT_ACTION_CHOSEN;
                             return;
                         }
                         else
@@ -4323,7 +4318,7 @@ static void HandleTurnActionSelectionState(void)
             }
             break;
         case STATE_WAIT_ACTION_CONFIRMED_STANDBY:
-            if (!(gBattleControllerExecFlags & ((gBitTable[battler])
+            if (!(gBattleControllerExecFlags & ((gBitTable[battler]) // *TODO - what's going on here
                                                 | (0xF << 28)
                                                 | (gBitTable[battler] << 4)
                                                 | (gBitTable[battler] << 8)
@@ -4336,7 +4331,7 @@ static void HandleTurnActionSelectionState(void)
 
                 if (((gBattleTypeFlags & BATTLE_TYPE_MULTI) || !(gBattleTypeFlags &  BATTLE_TYPE_DOUBLE))
                     || (position & BIT_FLANK) != B_FLANK_LEFT
-                    || (*(&gBattleStruct->absentBattlerFlags) & gBitTable[GetBattlerAtPosition(BATTLE_PARTNER(position))]))
+                    || (gBattleStruct->absentBattlerFlags & gBitTable[GetBattlerAtPosition(BATTLE_PARTNER(position))]))
                 {
                     BtlController_EmitLinkStandbyMsg(battler, BUFFER_A, LINK_STANDBY_MSG_STOP_BOUNCE, i);
                 }
@@ -4355,9 +4350,9 @@ static void HandleTurnActionSelectionState(void)
             }
             break;
         case STATE_SELECTION_SCRIPT:
-            if (*(gBattleStruct->selectionScriptFinished + battler))
+            if (gBattleStruct->selectionScriptFinished[battler])
             {
-                gBattleCommunication[battler] = *(gBattleStruct->stateIdAfterSelScript + battler);
+                gBattleCommunication[battler] = gBattleStruct->stateIdAfterSelScript[battler];
             }
             else
             {
@@ -4377,7 +4372,7 @@ static void HandleTurnActionSelectionState(void)
             }
             break;
         case STATE_SELECTION_SCRIPT_MAY_RUN:
-            if (*(gBattleStruct->selectionScriptFinished + battler))
+            if (gBattleStruct->selectionScriptFinished[battler])
             {
                 if (gBattleResources->bufferB[battler][1] == B_ACTION_NOTHING_FAINTED)
                 {

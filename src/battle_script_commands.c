@@ -5125,7 +5125,7 @@ static void Cmd_endselectionscript(void)
 {
     CMD_ARGS();
 
-    *(gBattlerAttacker + gBattleStruct->selectionScriptFinished) = TRUE;
+    gBattleStruct->selectionScriptFinished[gBattlerAttacker] = TRUE;
 }
 
 static void PlayAnimation(u32 battler, u8 animId, const u16 *argPtr, const u8 *nextInstr)

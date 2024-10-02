@@ -216,7 +216,7 @@ void HandleAction_UseMove(void)
     moveTarget = GetBattlerMoveTargetType(gBattlerAttacker, gCurrentMove);
 
     // choose target
-    side = BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker));
+    side = BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker)); // Follow Me
     if (IsAffectedByFollowMe(gBattlerAttacker, side, gCurrentMove)
         && moveTarget == MOVE_TARGET_SELECTED
         && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gSideTimers[side].followmeTarget))
@@ -226,14 +226,14 @@ void HandleAction_UseMove(void)
     else if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
            && gSideTimers[side].followmeTimer == 0
            && (gMovesInfo[gCurrentMove].power != 0 || (moveTarget != MOVE_TARGET_USER && moveTarget != MOVE_TARGET_ALL_BATTLERS))
-           && ((GetBattlerAbility(*(gBattleStruct->moveTarget + gBattlerAttacker)) != ABILITY_LIGHTNING_ROD && moveType == TYPE_ELECTRIC)
-            || (GetBattlerAbility(*(gBattleStruct->moveTarget + gBattlerAttacker)) != ABILITY_STORM_DRAIN && moveType == TYPE_WATER)))
+           && ((GetBattlerAbility(gBattleStruct->moveTarget[gBattlerAttacker]) != ABILITY_LIGHTNING_ROD && moveType == TYPE_ELECTRIC)
+            || (GetBattlerAbility(gBattleStruct->moveTarget[gBattlerAttacker]) != ABILITY_STORM_DRAIN && moveType == TYPE_WATER)))
     {
         side = GetBattlerSide(gBattlerAttacker);
-        for (battler = 0; battler < gBattlersCount; battler++)
+        for (battler = 0; battler < gBattlersCount; battler++) // Lightning Rod and Storm Drain
         {
             if (side != GetBattlerSide(battler)
-                && *(gBattleStruct->moveTarget + gBattlerAttacker) != battler
+                && gBattleStruct->moveTarget[gBattlerAttacker] != battler
                 && ((GetBattlerAbility(battler) == ABILITY_LIGHTNING_ROD && moveType == TYPE_ELECTRIC)
                  || (GetBattlerAbility(battler) == ABILITY_STORM_DRAIN && moveType == TYPE_WATER))
                 && GetBattlerTurnOrderNum(battler) < var
@@ -245,24 +245,11 @@ void HandleAction_UseMove(void)
                 var = GetBattlerTurnOrderNum(battler);
             }
         }
-        if (var == 4)
+        if (var == MAX_BATTLERS_COUNT)
         {
             if (moveTarget & MOVE_TARGET_RANDOM)
             {
-                if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
-                {
-                    if (Random() & 1)
-                        gBattlerTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-                    else
-                        gBattlerTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-                }
-                else
-                {
-                    if (Random() & 1)
-                        gBattlerTarget = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
-                    else
-                        gBattlerTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
-                }
+                gBattlerTarget = GetRandomTargetOnSide(BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker)));
             }
             else if (moveTarget & MOVE_TARGET_FOES_AND_ALLY)
             {
@@ -276,7 +263,7 @@ void HandleAction_UseMove(void)
             }
             else
             {
-                gBattlerTarget = *(gBattleStruct->moveTarget + gBattlerAttacker);
+                gBattlerTarget = gBattleStruct->moveTarget[gBattlerAttacker];
             }
 
             if (!IsBattlerAlive(gBattlerTarget))
@@ -307,29 +294,9 @@ void HandleAction_UseMove(void)
             gBattlerTarget = battler;
         }
     }
-    else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-          && moveTarget & MOVE_TARGET_RANDOM)
+    else if (moveTarget & MOVE_TARGET_RANDOM) // Regular handling
     {
-        if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
-        {
-            if (Random() & 1)
-                gBattlerTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-            else
-                gBattlerTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-        }
-        else
-        {
-            if (Random() & 1)
-                gBattlerTarget = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
-            else
-                gBattlerTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
-        }
-
-        if (gAbsentBattlerFlags & gBitTable[gBattlerTarget]
-            && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gBattlerTarget))
-        {
-            gBattlerTarget = GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(gBattlerTarget)));
-        }
+        gBattlerTarget = GetRandomTargetOnSide(BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker)));
     }
     else if (moveTarget == MOVE_TARGET_ALLY)
     {
@@ -338,8 +305,7 @@ void HandleAction_UseMove(void)
         else
             gBattlerTarget = gBattlerAttacker;
     }
-    else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-          && moveTarget == MOVE_TARGET_FOES_AND_ALLY)
+    else if (moveTarget == MOVE_TARGET_FOES_AND_ALLY)
     {
         for (gBattlerTarget = 0; gBattlerTarget < gBattlersCount; gBattlerTarget++)
         {
@@ -351,18 +317,16 @@ void HandleAction_UseMove(void)
     }
     else
     {
-        gBattlerTarget = *(gBattleStruct->moveTarget + gBattlerAttacker);
+        gBattlerTarget = gBattleStruct->moveTarget[gBattlerAttacker];
         if (!IsBattlerAlive(gBattlerTarget) && moveTarget != MOVE_TARGET_OPPONENTS_FIELD)
         {
             if (GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gBattlerTarget))
             {
-                gBattlerTarget = GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(gBattlerTarget)));
+                gBattlerTarget = GetRandomTargetOnSide(GetBattlerSide(gBattlerTarget));
             }
             else
             {
-                gBattlerTarget = GetBattlerAtPosition(BATTLE_OPPOSITE(GetBattlerPosition(gBattlerAttacker)));
-                if (!IsBattlerAlive(gBattlerTarget))
-                    gBattlerTarget = GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(gBattlerTarget)));
+                gBattlerTarget = GetRandomTargetOnSide(BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker)));
             }
         }
     }
