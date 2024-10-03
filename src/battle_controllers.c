@@ -357,9 +357,9 @@ static void SetBattlePartyIds(void)
                 last = j + 1;
                 break;
             }
-            else // *TODO -- I don't think this is correct
+            else // *TODO -- this works
             {
-                gBattlerPartyIndexes[i] = 0;
+                gBattlerPartyIndexes[i] = PARTY_SIZE;
             }
         }
     }
@@ -375,10 +375,10 @@ static void SetBattlePartyIds(void)
                 last = j + 1;
                 break;
             }
-            // else
-            // {
-            //     gBattlerPartyIndexes[i] = 0;
-            // }
+            else
+            {
+                gBattlerPartyIndexes[i] = PARTY_SIZE;
+            }
         }
     }
 }

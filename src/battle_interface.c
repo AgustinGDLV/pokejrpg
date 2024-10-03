@@ -804,12 +804,16 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority, bool32 hideHPBoxes)
 
 void GetBattlerHealthboxCoords(u8 battler, s16 *x, s16 *y)
 {
+    u32 count = gPlayerPartyCount;
     *x = 0, *y = 0;
 
     if (GetBattlerSide(battler) == B_SIDE_OPPONENT)
         return;
 
-    u32 offset = 80 - 40 * (gPlayerPartyCount - 1);
+    if (gPlayerPartyCount > MAX_PLAYER_BATTLERS)
+        count = MAX_PLAYER_BATTLERS;
+
+    u32 offset = 80 - 40 * (count - 1);
     *x = 32 + 80 * battler + offset;
     *y = 128;
 }
