@@ -3188,6 +3188,7 @@ void SwitchInClearSetData(u32 battler)
     gBattleStruct->palaceFlags &= ~(gBitTable[battler]);
     gBattleStruct->boosterEnergyActivates &= ~(gBitTable[battler]);
     gBattleStruct->canPickupItem &= ~(1u << battler);
+    gBattleStruct->selectedForSwitch[battler] = FALSE;
 
     for (i = 0; i < ARRAY_COUNT(gSideTimers); i++)
     {

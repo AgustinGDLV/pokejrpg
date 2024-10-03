@@ -3721,145 +3721,33 @@ u8 AtkCanceller_UnableToUseMove2(void)
 
 bool32 HasNoMonsToSwitch(u32 battler, u8 partyIdBattlerOn1, u8 partyIdBattlerOn2)
 {
-    u32 i, side, playerId, flankId;
-    struct Pokemon *party;
+    u32 partyIndex, i;
 
-    if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
-        return FALSE;
+    if (GetBattlerSide(battler) == B_SIDE_OPPONENT) // *TODO - can opponents switch?
+        return TRUE;
 
-    side = GetBattlerSide(battler);
-
-    if (BATTLE_TWO_VS_ONE_OPPONENT && side == B_SIDE_OPPONENT)
+    for (partyIndex = 0; partyIndex < PARTY_SIZE; partyIndex++)
     {
-        flankId = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-        playerId = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-        party = gEnemyParty;
-
-        if (partyIdBattlerOn1 == PARTY_SIZE)
-            partyIdBattlerOn1 = gBattlerPartyIndexes[flankId];
-        if (partyIdBattlerOn2 == PARTY_SIZE)
-            partyIdBattlerOn2 = gBattlerPartyIndexes[playerId];
-
-        for (i = 0; i < PARTY_SIZE; i++)
+        if (IsValidForBattle(&gPlayerParty[partyIndex]))
         {
-            if (IsValidForBattle(&party[i])
-             && i != partyIdBattlerOn1 && i != partyIdBattlerOn2
-             && i != *(gBattleStruct->monToSwitchIntoId + flankId) && i != playerId[gBattleStruct->monToSwitchIntoId])
-                break;
-        }
-        return (i == PARTY_SIZE);
-    }
-    else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
-    {
-        party = GetBattlerParty(battler);
-        if (side == B_SIDE_OPPONENT && WILD_DOUBLE_BATTLE)
-        {
-            flankId = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-            playerId = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-
-            if (partyIdBattlerOn1 == PARTY_SIZE)
-                partyIdBattlerOn1 = gBattlerPartyIndexes[flankId];
-            if (partyIdBattlerOn2 == PARTY_SIZE)
-                partyIdBattlerOn2 = gBattlerPartyIndexes[playerId];
-
-            for (i = 0; i < PARTY_SIZE; i++)
+            for (i = 0; i < MAX_PLAYER_BATTLERS; ++i)
             {
-                if (IsValidForBattle(&party[i])
-                 && i != partyIdBattlerOn1 && i != partyIdBattlerOn2
-                 && i != *(gBattleStruct->monToSwitchIntoId + flankId) && i != playerId[gBattleStruct->monToSwitchIntoId])
+                // Check to see that party index is not currently active or being switched into.
+                if ((gBattleStruct->monToSwitchIntoId[i] == PARTY_SIZE
+                    && gBattlerPartyIndexes[i] == partyIndex)
+                    || gBattleStruct->monToSwitchIntoId[i] == partyIndex)
+                {
                     break;
+                }
             }
-            return (i == PARTY_SIZE);
-        }
-        else
-        {
-            playerId = ((battler & BIT_FLANK) / 2);
-            for (i = playerId * MULTI_PARTY_SIZE; i < playerId * MULTI_PARTY_SIZE + MULTI_PARTY_SIZE; i++)
-            {
-                if (IsValidForBattle(&party[i]))
-                    break;
-            }
-            return (i == playerId * MULTI_PARTY_SIZE + MULTI_PARTY_SIZE);
+            // No battler found "using" party index!
+            if (i == MAX_PLAYER_BATTLERS)
+                return FALSE;
         }
     }
-    else if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
-    {
-        if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
-        {
-            if (side == B_SIDE_PLAYER)
-            {
-                party = gPlayerParty;
-                flankId = GetBattlerMultiplayerId(battler);
-                playerId = GetLinkTrainerFlankId(flankId);
-            }
-            else
-            {
-                party = gEnemyParty;
-                if (battler == 1)
-                    playerId = 0;
-                else
-                    playerId = 1;
-            }
-        }
-        else
-        {
-            flankId = GetBattlerMultiplayerId(battler);
-            party = GetBattlerParty(battler);
-            playerId = GetLinkTrainerFlankId(flankId);
-        }
 
-        for (i = playerId * MULTI_PARTY_SIZE; i < playerId * MULTI_PARTY_SIZE + MULTI_PARTY_SIZE; i++)
-        {
-            if (IsValidForBattle(&party[i]))
-                break;
-        }
-        return (i == playerId * MULTI_PARTY_SIZE + MULTI_PARTY_SIZE);
-    }
-    else if ((gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) && side == B_SIDE_OPPONENT)
-    {
-        party = gEnemyParty;
-
-        if (battler == 1)
-            playerId = 0;
-        else
-            playerId = MULTI_PARTY_SIZE;
-
-        for (i = playerId; i < playerId + MULTI_PARTY_SIZE; i++)
-        {
-            if (IsValidForBattle(&party[i]))
-                break;
-        }
-        return (i == playerId + 3);
-    }
-    else
-    {
-        if (side == B_SIDE_OPPONENT)
-        {
-            flankId = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-            playerId = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-            party = gEnemyParty;
-        }
-        else
-        {
-            flankId = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
-            playerId = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
-            party = gPlayerParty;
-        }
-
-        if (partyIdBattlerOn1 == PARTY_SIZE)
-            partyIdBattlerOn1 = gBattlerPartyIndexes[flankId];
-        if (partyIdBattlerOn2 == PARTY_SIZE)
-            partyIdBattlerOn2 = gBattlerPartyIndexes[playerId];
-
-        for (i = 0; i < PARTY_SIZE; i++)
-        {
-            if (IsValidForBattle(&party[i])
-             && i != partyIdBattlerOn1 && i != partyIdBattlerOn2
-             && i != *(gBattleStruct->monToSwitchIntoId + flankId) && i != playerId[gBattleStruct->monToSwitchIntoId])
-                break;
-        }
-        return (i == PARTY_SIZE);
-    }
+    // No valid party index found.
+    return TRUE;
 }
 
 static const u16 sWeatherFlagsInfo[][3] =

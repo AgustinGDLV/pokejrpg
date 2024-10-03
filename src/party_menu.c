@@ -455,7 +455,7 @@ static u8 GetBattleEntryLevelCap(void);
 static u8 GetMaxBattleEntries(void);
 static u8 GetMinBattleEntries(void);
 static void Task_ContinueChoosingHalfParty(u8);
-static void BufferBattlePartyOrder(u8 *, bool8);
+static void BufferBattlePartyOrder(u8 *);
 static void BufferBattlePartyOrderBySide(u8 *, u8, u8);
 static void Task_InitMultiPartnerPartySlideIn(u8);
 static void Task_MultiPartnerPartySlideIn(u8);
@@ -3701,6 +3701,7 @@ static void CursorCb_SendMon(u8 taskId)
     PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[0]);
     if (TrySwitchInPokemon() == TRUE)
     {
+        gBattleStruct->selectedForSwitch[gSelectedMonPartyId] = TRUE;
         Task_ClosePartyMenu(taskId);
     }
     else
@@ -7169,7 +7170,7 @@ static bool8 TrySwitchInPokemon(void)
         StringExpandPlaceholders(gStringVar4, gText_EggCantBattle);
         return FALSE;
     }
-    if (GetPartyIdFromBattleSlot(slot) == gBattleStruct->prevSelectedPartySlot)
+    if (gBattleStruct->selectedForSwitch[GetPartyIdFromBattleSlot(slot)])
     {
         GetMonNickname(&gPlayerParty[slot], gStringVar1);
         StringExpandPlaceholders(gStringVar4, gText_PkmnAlreadySelected);
@@ -7197,64 +7198,31 @@ static bool8 TrySwitchInPokemon(void)
 
 void BufferBattlePartyCurrentOrder(void)
 {
-    BufferBattlePartyOrder(gBattlePartyCurrentOrder, GetPlayerFlankId());
+    BufferBattlePartyOrder(gBattlePartyCurrentOrder);
 }
 
-static void BufferBattlePartyOrder(u8 *partyBattleOrder, u8 flankId)
+static void BufferBattlePartyOrder(u8 *partyBattleOrder)
 {
     u8 partyIds[PARTY_SIZE];
-    int i, j;
+    int i, j = 3;
 
-    if (IsMultiBattle() == TRUE)
+    partyIds[0] = gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)];
+    partyIds[1] = gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_MIDDLE)];
+    partyIds[2] = gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)];
+    for (i = 0; i < PARTY_SIZE; i++)
     {
-        // Party ids are packed in 4 bits at a time
-        // i.e. the party id order below would be 0, 3, 5, 4, 2, 1, and the two parties would be 0,5,4 and 3,2,1
-        if (flankId != 0)
+        if (i != partyIds[0] && i != partyIds[1] && i != partyIds[2])
         {
-            partyBattleOrder[0] = 0 | (3 << 4);
-            partyBattleOrder[1] = 5 | (4 << 4);
-            partyBattleOrder[2] = 2 | (1 << 4);
-        }
-        else
-        {
-            partyBattleOrder[0] = 3 | (0 << 4);
-            partyBattleOrder[1] = 2 | (1 << 4);
-            partyBattleOrder[2] = 5 | (4 << 4);
-        }
-        return;
-    }
-    else if (IsDoubleBattle() == FALSE)
-    {
-        j = 1;
-        partyIds[0] = gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)];
-        for (i = 0; i < PARTY_SIZE; i++)
-        {
-            if (i != partyIds[0])
-            {
-                partyIds[j] = i;
-                j++;
-            }
+            partyIds[j] = i;
+            j++;
         }
     }
-    else
-    {
-        j = 2;
-        partyIds[0] = gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)];
-        partyIds[1] = gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)];
-        for (i = 0; i < PARTY_SIZE; i++)
-        {
-            if (i != partyIds[0] && i != partyIds[1])
-            {
-                partyIds[j] = i;
-                j++;
-            }
-        }
-    }
+
     for (i = 0; i < (int)ARRAY_COUNT(gBattlePartyCurrentOrder); i++)
         partyBattleOrder[i] = (partyIds[0 + (i * 2)] << 4) | partyIds[1 + (i * 2)];
 }
 
-void BufferBattlePartyCurrentOrderBySide(u8 battlerId, u8 flankId)
+void BufferBattlePartyCurrentOrderBySide(u8 battlerId, u8 flankId) // *TODO - confirm working and eliminate redundant functions
 {
     BufferBattlePartyOrderBySide(gBattleStruct->battlerPartyOrders[battlerId], flankId, battlerId);
 }
@@ -7262,68 +7230,23 @@ void BufferBattlePartyCurrentOrderBySide(u8 battlerId, u8 flankId)
 // when GetBattlerSide(battlerId) == B_SIDE_PLAYER, this function is identical the one above
 static void BufferBattlePartyOrderBySide(u8 *partyBattleOrder, u8 flankId, u8 battlerId)
 {
-    u8 partyIndexes[PARTY_SIZE];
-    int i, j;
-    u8 leftBattler;
-    u8 rightBattler;
+    u8 partyIds[PARTY_SIZE];
+    int i, j = 3;
 
-    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
+    partyIds[0] = gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)];
+    partyIds[1] = gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_MIDDLE)];
+    partyIds[2] = gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)];
+    for (i = 0; i < PARTY_SIZE; i++)
     {
-        leftBattler = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
-        rightBattler = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
-    }
-    else
-    {
-        leftBattler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-        rightBattler = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-    }
-
-    if (IsMultiBattle() == TRUE)
-    {
-        if (flankId != 0)
+        if (i != partyIds[0] && i != partyIds[1] && i != partyIds[2])
         {
-            partyBattleOrder[0] = 0 | (3 << 4);
-            partyBattleOrder[1] = 5 | (4 << 4);
-            partyBattleOrder[2] = 2 | (1 << 4);
-        }
-        else
-        {
-            partyBattleOrder[0] = 3 | (0 << 4);
-            partyBattleOrder[1] = 2 | (1 << 4);
-            partyBattleOrder[2] = 5 | (4 << 4);
-        }
-        return;
-    }
-    else if (IsDoubleBattle() == FALSE)
-    {
-        j = 1;
-        partyIndexes[0] = gBattlerPartyIndexes[leftBattler];
-        for (i = 0; i < PARTY_SIZE; i++)
-        {
-            if (i != partyIndexes[0])
-            {
-                partyIndexes[j] = i;
-                j++;
-            }
-        }
-    }
-    else
-    {
-        j = 2;
-        partyIndexes[0] = gBattlerPartyIndexes[leftBattler];
-        partyIndexes[1] = gBattlerPartyIndexes[rightBattler];
-        for (i = 0; i < PARTY_SIZE; i++)
-        {
-            if (i != partyIndexes[0] && i != partyIndexes[1])
-            {
-                partyIndexes[j] = i;
-                j++;
-            }
+            partyIds[j] = i;
+            j++;
         }
     }
 
     for (i = 0; i < 3; i++)
-        partyBattleOrder[i] = (partyIndexes[0 + (i * 2)] << 4) | partyIndexes[1 + (i * 2)];
+        partyBattleOrder[i] = (partyIds[0 + (i * 2)] << 4) | partyIds[1 + (i * 2)];
 }
 
 void SwitchPartyOrderLinkMulti(u8 battlerId, u8 slot, u8 slot2)
