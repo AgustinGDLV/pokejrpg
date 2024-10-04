@@ -3458,7 +3458,6 @@ static void DoBattleIntro(void)
 
             if (GetBattlerSide(battler) == B_SIDE_OPPONENT && IsBattlerAlive(battler))
             {
-                DebugPrintf("battler %d occupies index %d and has %d HP", battler, gBattlerPartyIndexes[battler], gBattleMons[battler].hp);
                 BtlController_EmitLoadMonSprite(battler, BUFFER_A);
                 MarkBattlerForControllerExec(battler);
                 gBattleResults.lastOpponentSpecies = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES, NULL);

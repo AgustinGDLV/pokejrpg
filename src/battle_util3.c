@@ -48,6 +48,15 @@ u32 GetAliveRightPartner(u32 battler)
         return GetAliveRightPartner(RIGHT_PARTNER(battler));
 }
 
+u32 GetFirstAliveBattlerOnSide(u32 side)
+{
+    u32 battler = GetFirstBattlerOnSide(side);
+    if (IsBattlerAlive(battler))
+        return battler;
+    else
+        return GetAliveRightPartner(battler);
+}
+
 u32 GetRandomTargetOnSide(u32 side)
 {
     u32 battler, hasLeft, hasRight;
@@ -78,4 +87,23 @@ u32 GetRandomTargetOnSide(u32 side)
         else
             return battler;
     }
+}
+
+u32 FindAbilityOnBattlerSide(u32 battler, u32 ability)
+{
+    u32 start, end, i;
+
+    if (GetBattlerSide(battler) == B_SIDE_PLAYER)
+        start = B_POSITION_PLAYER_LEFT, end = MAX_PLAYER_BATTLERS;
+    else
+        start = B_POSITION_OPPONENT_LEFT, end = MAX_BATTLERS_COUNT;
+
+    for (i = start; i < end; ++i)
+    {
+        if (GetBattlerAbility(i) == ability && IsBattlerAlive(i))
+            return i;
+    }
+
+    // None found.
+    return battler;
 }

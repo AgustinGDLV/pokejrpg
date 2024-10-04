@@ -8159,12 +8159,12 @@ u32 GetMoveTarget(u16 move, u8 setTarget)
         }
         else
         {
-            targetBattler = SetRandomTarget(gBattlerAttacker);
+            targetBattler = GetRandomTargetOnSide(side);
             if (moveType == TYPE_ELECTRIC
                 && IsAbilityOnOpposingSide(gBattlerAttacker, ABILITY_LIGHTNING_ROD)
                 && GetBattlerAbility(targetBattler) != ABILITY_LIGHTNING_ROD)
             {
-                targetBattler ^= BIT_FLANK;
+                targetBattler = FindAbilityOnBattlerSide(targetBattler, ABILITY_LIGHTNING_ROD);
                 RecordAbilityBattle(targetBattler, gBattleMons[targetBattler].ability);
                 gSpecialStatuses[targetBattler].lightningRodRedirected = TRUE;
             }
@@ -8172,7 +8172,7 @@ u32 GetMoveTarget(u16 move, u8 setTarget)
                 && IsAbilityOnOpposingSide(gBattlerAttacker, ABILITY_STORM_DRAIN)
                 && GetBattlerAbility(targetBattler) != ABILITY_STORM_DRAIN)
             {
-                targetBattler ^= BIT_FLANK;
+                targetBattler = FindAbilityOnBattlerSide(targetBattler, ABILITY_STORM_DRAIN);
                 RecordAbilityBattle(targetBattler, gBattleMons[targetBattler].ability);
                 gSpecialStatuses[targetBattler].stormDrainRedirected = TRUE;
             }
@@ -8181,21 +8181,19 @@ u32 GetMoveTarget(u16 move, u8 setTarget)
     case MOVE_TARGET_DEPENDS:
     case MOVE_TARGET_BOTH:
     case MOVE_TARGET_FOES_AND_ALLY:
-        targetBattler = GetBattlerAtPosition(BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker)));
+        targetBattler = GetFirstBattlerOnSide(BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker)));
         if (!IsBattlerAlive(targetBattler))
-            targetBattler ^= BIT_FLANK;
+            targetBattler = GetAliveRightPartner(targetBattler);
         break;
     case MOVE_TARGET_OPPONENTS_FIELD:
-        targetBattler = GetBattlerAtPosition(BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker)));
+        targetBattler = GetFirstBattlerOnSide(BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker)));
         break;
     case MOVE_TARGET_RANDOM:
         side = BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker));
         if (IsAffectedByFollowMe(gBattlerAttacker, side, move))
             targetBattler = gSideTimers[side].followmeTarget;
-        else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && moveTarget & MOVE_TARGET_RANDOM)
-            targetBattler = SetRandomTarget(gBattlerAttacker);
         else
-            targetBattler = GetBattlerAtPosition(BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker)));
+            targetBattler = GetRandomTargetOnSide(side);
         break;
     case MOVE_TARGET_USER_OR_SELECTED:
     case MOVE_TARGET_USER:
@@ -8203,14 +8201,16 @@ u32 GetMoveTarget(u16 move, u8 setTarget)
         targetBattler = gBattlerAttacker;
         break;
     case MOVE_TARGET_ALLY:
-        if (IsBattlerAlive(BATTLE_PARTNER(gBattlerAttacker)))
-            targetBattler = BATTLE_PARTNER(gBattlerAttacker);
+        if (HasAliveRightPartner(gBattlerAttacker))
+            targetBattler = GetAliveRightPartner(gBattlerAttacker);
+        else if (HasAliveLeftPartner(gBattlerAttacker))
+            targetBattler = GetAliveLeftPartner(gBattlerAttacker);
         else
             targetBattler = gBattlerAttacker;
         break;
     }
 
-    *(gBattleStruct->moveTarget + gBattlerAttacker) = targetBattler;
+    gBattleStruct->moveTarget[gBattlerAttacker] = targetBattler;
 
     return targetBattler;
 }
