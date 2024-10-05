@@ -66,7 +66,7 @@
 #define B_ACTION_THROW_BALL             21 // R to throw last used ball
 #define B_ACTION_NONE                   0xFF
 
-#define BATTLE_BUFFER_LINK_SIZE 0x1000
+#define BATTLE_BUFFER_LINK_SIZE 1
 
 // Special indicator value for shellBellDmg in SpecialStatus
 #define IGNORE_SHELL_BELL 0xFFFF
