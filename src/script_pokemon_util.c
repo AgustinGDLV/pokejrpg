@@ -126,6 +126,11 @@ void CreateScriptedWildMon(u16 species, u8 level, u16 item)
         heldItem[1] = item >> 8;
         SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, heldItem);
     }
+    
+        CreateMonWithNature(&gEnemyParty[1], species, level, USE_RANDOM_IVS, PickWildMonNature());
+        CreateMonWithNature(&gEnemyParty[2], species, level, USE_RANDOM_IVS, PickWildMonNature());
+        CreateMonWithNature(&gEnemyParty[3], species, level, USE_RANDOM_IVS, PickWildMonNature());
+        CreateMonWithNature(&gEnemyParty[4], species, level, USE_RANDOM_IVS, PickWildMonNature());
 }
 void CreateScriptedDoubleWildMon(u16 species1, u8 level1, u16 item1, u16 species2, u8 level2, u16 item2)
 {

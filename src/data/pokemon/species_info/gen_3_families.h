@@ -1330,7 +1330,7 @@ const struct SpeciesInfo gSpeciesInfoGen3[] =
         .shinyPalette = gMonShinyPalette_Wurmple,
         .iconSprite = gMonIcon_Wurmple,
         .iconPalIndex = 0,
-        SHADOW(0, 1, SHADOW_SIZE_S)
+        SHADOW(-3, 3, SHADOW_SIZE_M)
         FOOTPRINT(Wurmple)
         OVERWORLD(
             sPicTable_Wurmple,

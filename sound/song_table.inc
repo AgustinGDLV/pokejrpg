@@ -477,7 +477,7 @@ gSongTable::
 	song mus_vs_frontier_brain, 0, 0
 	song mus_vs_mew, 0, 0
 	song mus_b_dome_lobby, 0, 0
-	song mus_vs_wild, 0, 0
+	song mus_vs_wild, 0, GBS_MUSIC_ALOLA_WILD_BATTLE
 	song mus_vs_aqua_magma, 0, 0
 	song mus_vs_trainer, 0, 0
 	song mus_vs_gym_leader, 0, 0

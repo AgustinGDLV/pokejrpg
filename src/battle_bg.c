@@ -772,12 +772,16 @@ static const u16 sBlueBackgroundPalette[] = INCBIN_U16("graphics/battle_backgrou
 static const u32 sBlueBackgroundTiles[] = INCBIN_U32("graphics/battle_backgrounds/blue_tiles.4bpp.lz");
 static const u32 sBlueBackgroundTilemap[] = INCBIN_U32("graphics/battle_backgrounds/blue.bin.lz");
 
+static const u16 sGrassBackgroundPalette[] = INCBIN_U16("graphics/battle_backgrounds/grass.gbapal");
+static const u32 sGrassBackgroundTiles[] = INCBIN_U32("graphics/battle_backgrounds/grass.4bpp.lz");
+static const u32 sGrassBackgroundTilemap[] = INCBIN_U32("graphics/battle_backgrounds/grass.bin.lz");
+
 void DrawMainBattleBackground(void)
 {
     // *TODO
-    LZDecompressVram(sBlueBackgroundTiles, (void *)(BG_CHAR_ADDR(2)));
-    LZDecompressVram(sBlueBackgroundTilemap, (void *)(BG_SCREEN_ADDR(26)));
-	LoadPalette(sBlueBackgroundPalette, BG_PLTT_ID(2), PLTT_SIZE_4BPP);
+    LZDecompressVram(sGrassBackgroundTiles, (void *)(BG_CHAR_ADDR(2)));
+    LZDecompressVram(sGrassBackgroundTilemap, (void *)(BG_SCREEN_ADDR(26)));
+	LoadPalette(sGrassBackgroundPalette, BG_PLTT_ID(2), PLTT_SIZE_4BPP);
     CopyBgTilemapBufferToVram(2);
 
     // if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_RECORDED_LINK))
