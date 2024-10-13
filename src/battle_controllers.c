@@ -2326,11 +2326,13 @@ void BtlController_HandleFaintAnimation(u32 battler)
             if (GetBattlerSide(battler) == B_SIDE_PLAYER)
             {
                 HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[battler]], battler);
-                gSprites[gBattlerSpriteIds[battler]].sSpeedX = 0;
-                gSprites[gBattlerSpriteIds[battler]].sSpeedY = 5;
+                // *TODO - player faint anim
+                // gSprites[gBattlerSpriteIds[battler]].sSpeedX = 0;
+                // gSprites[gBattlerSpriteIds[battler]].sSpeedY = 5;
                 PlaySE12WithPanning(SE_FAINT, SOUND_PAN_ATTACKER);
-                gSprites[gBattlerSpriteIds[battler]].callback = SpriteCB_FaintSlideAnim;
-                gBattlerControllerFuncs[battler] = Controller_FaintPlayerMon;
+                // gSprites[gBattlerSpriteIds[battler]].callback = SpriteCB_FaintSlideAnim;
+                // gBattlerControllerFuncs[battler] = Controller_FaintPlayerMon;
+                BattleControllerComplete(battler);
             }
             else
             {

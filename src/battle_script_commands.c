@@ -2290,7 +2290,7 @@ static void Cmd_attackanimation(void)
     if (gBattleControllerExecFlags)
         return;
 
-    if ((gHitMarker & (HITMARKER_NO_ANIMATIONS | HITMARKER_DISABLE_ANIMATION))
+    if (((gHitMarker & HITMARKER_DISABLE_ANIMATION) || IsBattleSceneOff())
         && gCurrentMove != MOVE_TRANSFORM
         && gCurrentMove != MOVE_SUBSTITUTE
         && gCurrentMove != MOVE_ALLY_SWITCH
@@ -5274,7 +5274,7 @@ static void PlayAnimation(u32 battler, u8 animId, const u16 *argPtr, const u8 *n
         MarkBattlerForControllerExec(battler);
         gBattlescriptCurrInstr = nextInstr;
     }
-    else if (gHitMarker & (HITMARKER_NO_ANIMATIONS | HITMARKER_DISABLE_ANIMATION) && animId != B_ANIM_RESTORE_BG)
+    else if ((IsBattleSceneOff() || (gHitMarker & HITMARKER_DISABLE_ANIMATION)) && animId != B_ANIM_RESTORE_BG)
     {
         BattleScriptPush(nextInstr);
         gBattlescriptCurrInstr = BattleScript_Pausex20;
@@ -5904,7 +5904,7 @@ static void Cmd_moveend(void)
             break;
         case MOVEEND_ATTACKER_INVISIBLE: // make attacker sprite invisible
             if (gStatuses3[gBattlerAttacker] & (STATUS3_SEMI_INVULNERABLE)
-                && gHitMarker & (HITMARKER_NO_ANIMATIONS | HITMARKER_DISABLE_ANIMATION))
+                && (IsBattleSceneOff() || (gHitMarker & HITMARKER_DISABLE_ANIMATION)))
             {
                 BtlController_EmitSpriteInvisibility(gBattlerAttacker, BUFFER_A, TRUE);
                 MarkBattlerForControllerExec(gBattlerAttacker);
@@ -8075,7 +8075,7 @@ static void Cmd_statusanimation(void)
         u32 battler = GetBattlerForBattleScript(cmd->battler);
         if (!(gStatuses3[battler] & STATUS3_SEMI_INVULNERABLE)
             && gDisableStructs[battler].substituteHP == 0
-            && !(gHitMarker & (HITMARKER_NO_ANIMATIONS | HITMARKER_DISABLE_ANIMATION)))
+            && !(IsBattleSceneOff() || (gHitMarker & HITMARKER_DISABLE_ANIMATION)))
         {
             BtlController_EmitStatusAnimation(battler, BUFFER_A, FALSE, gBattleMons[battler].status1);
             MarkBattlerForControllerExec(battler);
@@ -8094,7 +8094,7 @@ static void Cmd_status2animation(void)
         u32 status2ToAnim = cmd->status2;
         if (!(gStatuses3[battler] & STATUS3_SEMI_INVULNERABLE)
             && gDisableStructs[battler].substituteHP == 0
-            && !(gHitMarker & (HITMARKER_NO_ANIMATIONS | HITMARKER_DISABLE_ANIMATION)))
+            && !(IsBattleSceneOff() || (gHitMarker & HITMARKER_DISABLE_ANIMATION)))
         {
             BtlController_EmitStatusAnimation(battler, BUFFER_A, TRUE, gBattleMons[battler].status2 & status2ToAnim);
             MarkBattlerForControllerExec(battler);
@@ -8113,7 +8113,7 @@ static void Cmd_chosenstatusanimation(void)
         u32 wantedStatus = cmd->status;
         if (!(gStatuses3[battler] & STATUS3_SEMI_INVULNERABLE)
             && gDisableStructs[battler].substituteHP == 0
-            && !(gHitMarker & (HITMARKER_NO_ANIMATIONS | HITMARKER_DISABLE_ANIMATION)))
+            && !(IsBattleSceneOff() || (gHitMarker & HITMARKER_DISABLE_ANIMATION)))
         {
             BtlController_EmitStatusAnimation(battler, BUFFER_A, cmd->isStatus2, wantedStatus);
             MarkBattlerForControllerExec(battler);

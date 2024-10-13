@@ -99,8 +99,29 @@ u8 GetBattlerSpriteCoord(u8 battlerId, u8 coordType)
     {
     case BATTLER_COORD_X:
     case BATTLER_COORD_X_2:
-        retVal = 120 - 20 * (gEnemyPartyCount - 1) + 40 * (battlerId - MAX_PLAYER_BATTLERS);
+    {
+        u32 count = (gEnemyPartyCount >= PARTY_SIZE) ? MAX_OPPONENT_BATTLERS : gEnemyPartyCount;
+        switch (count)
+        {
+            case 1:
+                retVal = 120;
+                break;
+            case 2:
+                retVal = 90 + 60 * (battlerId - MAX_PLAYER_BATTLERS);
+                break;
+            case 3:
+                retVal = 60 + 60 * (battlerId - MAX_PLAYER_BATTLERS);
+                break;
+            case 4:
+                retVal = 60 + 40 * (battlerId - MAX_PLAYER_BATTLERS);
+                break;
+            default:
+            case 5:
+                retVal = 40 + 40 * (battlerId - MAX_PLAYER_BATTLERS);
+            
+        }
         break;
+    }
     case BATTLER_COORD_Y:
         retVal = 70; // *TODO -- constant
         break;
