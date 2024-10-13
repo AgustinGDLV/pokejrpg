@@ -265,7 +265,7 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves, u32 battler)
     }
 
     //sBattler_AI = battler;
-    gBattlerTarget = SetRandomTarget(sBattler_AI);
+    gBattlerTarget = GetRandomTargetOnSide(BATTLE_OPPOSITE(GetBattlerSide(sBattler_AI)));
     gBattleStruct->aiChosenTarget[sBattler_AI] = gBattlerTarget;
 }
 

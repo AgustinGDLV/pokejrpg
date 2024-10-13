@@ -8224,8 +8224,6 @@ u32 GetMoveTarget(u16 move, u8 setTarget)
         side = BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker));
         if (IsAffectedByFollowMe(gBattlerAttacker, side, move))
             targetBattler = gSideTimers[side].followmeTarget;
-        else if (IsDoubleBattle() && moveTarget & MOVE_TARGET_RANDOM)
-            targetBattler = SetRandomTarget(gBattlerAttacker);
         else
             targetBattler = GetRandomTargetOnSide(side);
         break;
