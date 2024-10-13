@@ -672,8 +672,8 @@ void HandleAction_NothingIsFainted(void)
     gCurrentActionFuncId = gActionsByTurnOrder[gCurrentTurnActionNumber];
     gHitMarker &= ~(HITMARKER_DESTINYBOND | HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_ATTACKSTRING_PRINTED
                     | HITMARKER_NO_PPDEDUCT | HITMARKER_STATUS_ABILITY_EFFECT | HITMARKER_PASSIVE_DAMAGE
-                    | HITMARKER_OBEYS | HITMARKER_WAKE_UP_CLEAR | HITMARKER_SYNCHRONISE_EFFECT
-                    | HITMARKER_CHARGING | HITMARKER_NEVER_SET);
+                    | HITMARKER_OBEYS | HITMARKER_SYNCHRONISE_EFFECT
+                    | HITMARKER_CHARGING);
 }
 
 void HandleAction_ActionFinished(void)
@@ -686,8 +686,8 @@ void HandleAction_ActionFinished(void)
     SpecialStatusesClear();
     gHitMarker &= ~(HITMARKER_DESTINYBOND | HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_ATTACKSTRING_PRINTED
                     | HITMARKER_NO_PPDEDUCT | HITMARKER_STATUS_ABILITY_EFFECT | HITMARKER_PASSIVE_DAMAGE
-                    | HITMARKER_OBEYS | HITMARKER_WAKE_UP_CLEAR | HITMARKER_SYNCHRONISE_EFFECT
-                    | HITMARKER_CHARGING | HITMARKER_NEVER_SET | HITMARKER_IGNORE_DISGUISE);
+                    | HITMARKER_OBEYS | HITMARKER_SYNCHRONISE_EFFECT
+                    | HITMARKER_CHARGING | HITMARKER_IGNORE_DISGUISE);
 
     // check if Stellar type boost should be used up
     moveType = GetMoveType(gCurrentMove);

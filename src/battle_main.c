@@ -2730,7 +2730,7 @@ void SpriteCB_OpponentMonFromBall(struct Sprite *sprite)
 {
     if (sprite->affineAnimEnded)
     {
-        if (!(gHitMarker & HITMARKER_NO_ANIMATIONS) || gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK))
+        if (!(IsBattleSceneOff() || gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK)))
         {
             if (HasTwoFramesAnimation(sprite->sSpeciesId))
                 StartSpriteAnim(sprite, 1);
@@ -3020,16 +3020,6 @@ static void BattleStartClearSetData(void)
     gBattlerAbility = 0;
     gBattleWeather = 0;
     gHitMarker = 0;
-
-    if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
-    {
-        if (!(gBattleTypeFlags & BATTLE_TYPE_LINK) && gSaveBlock2Ptr->optionsBattleSceneOff == TRUE)
-            gHitMarker |= HITMARKER_NO_ANIMATIONS;
-    }
-    else if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK)) && GetBattleSceneInRecordedBattle())
-    {
-        gHitMarker |= HITMARKER_NO_ANIMATIONS;
-    }
 
     gMultiHitCounter = 0;
     gBattleOutcome = 0;

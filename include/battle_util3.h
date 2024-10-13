@@ -8,6 +8,7 @@ u32 GetAliveRightPartner(u32 battler);
 u32 GetRandomTargetOnSide(u32 side);
 u32 GetFirstAliveBattlerOnSide(u32 side);
 u32 FindAbilityOnBattlerSide(u32 battler, u32 ability);
+bool32 IsBattleSceneOff(void);
 
 static inline u32 GetFirstBattlerOnSide(u32 side)
 {

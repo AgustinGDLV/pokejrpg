@@ -4,6 +4,7 @@
 #include "pokemon.h"
 #include "util.h"
 #include "random.h"
+#include "recorded_battle.h"
 
 #define LEFT_PARTNER(battler)   (battler - 1)
 #define RIGHT_PARTNER(battler)  (battler + 1)
@@ -106,4 +107,9 @@ u32 FindAbilityOnBattlerSide(u32 battler, u32 ability)
 
     // None found.
     return battler;
+}
+
+bool32 IsBattleSceneOff(void)
+{
+    return gSaveBlock2Ptr->optionsBattleSceneOff || ((gBattleTypeFlags & BATTLE_TYPE_RECORDED) && GetBattleSceneInRecordedBattle());
 }
