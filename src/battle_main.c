@@ -2790,71 +2790,73 @@ void SpriteCB_FaintSlideAnim(struct Sprite *sprite)
 
 void DoBounceEffect(u8 battler, u8 which, s8 delta, s8 amplitude)
 {
-    u8 invisibleSpriteId;
-    u8 bouncerSpriteId;
+    return;
+    // u8 invisibleSpriteId;
+    // u8 bouncerSpriteId;
 
-    switch (which)
-    {
-    case BOUNCE_HEALTHBOX:
-    default:
-        if (gBattleSpritesDataPtr->healthBoxesData[battler].healthboxIsBouncing)
-            return;
-        break;
-    case BOUNCE_MON:
-        if (gBattleSpritesDataPtr->healthBoxesData[battler].battlerIsBouncing)
-            return;
-        break;
-    }
+    // switch (which)
+    // {
+    // case BOUNCE_HEALTHBOX:
+    // default:
+    //     if (gBattleSpritesDataPtr->healthBoxesData[battler].healthboxIsBouncing)
+    //         return;
+    //     break;
+    // case BOUNCE_MON:
+    //     if (gBattleSpritesDataPtr->healthBoxesData[battler].battlerIsBouncing)
+    //         return;
+    //     break;
+    // }
 
-    invisibleSpriteId = CreateInvisibleSpriteWithCallback(SpriteCB_BounceEffect);
-    if (which == BOUNCE_HEALTHBOX)
-    {
-        bouncerSpriteId = gHealthboxSpriteIds[battler];
-        gBattleSpritesDataPtr->healthBoxesData[battler].healthboxBounceSpriteId = invisibleSpriteId;
-        gBattleSpritesDataPtr->healthBoxesData[battler].healthboxIsBouncing = 1;
-        gSprites[invisibleSpriteId].sSinIndex = 128; // 0
-    }
-    else
-    {
-        bouncerSpriteId = gBattlerSpriteIds[battler];
-        gBattleSpritesDataPtr->healthBoxesData[battler].battlerBounceSpriteId = invisibleSpriteId;
-        gBattleSpritesDataPtr->healthBoxesData[battler].battlerIsBouncing = 1;
-        gSprites[invisibleSpriteId].sSinIndex = 192; // -1
-    }
-    gSprites[invisibleSpriteId].sDelta = delta;
-    gSprites[invisibleSpriteId].sAmplitude = amplitude;
-    gSprites[invisibleSpriteId].sBouncerSpriteId = bouncerSpriteId;
-    gSprites[invisibleSpriteId].sWhich = which;
-    gSprites[invisibleSpriteId].sBattler = battler;
-    gSprites[bouncerSpriteId].x2 = 0;
-    gSprites[bouncerSpriteId].y2 = 0;
+    // invisibleSpriteId = CreateInvisibleSpriteWithCallback(SpriteCB_BounceEffect);
+    // if (which == BOUNCE_HEALTHBOX)
+    // {
+    //     bouncerSpriteId = gHealthboxSpriteIds[battler];
+    //     gBattleSpritesDataPtr->healthBoxesData[battler].healthboxBounceSpriteId = invisibleSpriteId;
+    //     gBattleSpritesDataPtr->healthBoxesData[battler].healthboxIsBouncing = 1;
+    //     gSprites[invisibleSpriteId].sSinIndex = 128; // 0
+    // }
+    // else
+    // {
+    //     bouncerSpriteId = gBattlerSpriteIds[battler];
+    //     gBattleSpritesDataPtr->healthBoxesData[battler].battlerBounceSpriteId = invisibleSpriteId;
+    //     gBattleSpritesDataPtr->healthBoxesData[battler].battlerIsBouncing = 1;
+    //     gSprites[invisibleSpriteId].sSinIndex = 192; // -1
+    // }
+    // gSprites[invisibleSpriteId].sDelta = delta;
+    // gSprites[invisibleSpriteId].sAmplitude = amplitude;
+    // gSprites[invisibleSpriteId].sBouncerSpriteId = bouncerSpriteId;
+    // gSprites[invisibleSpriteId].sWhich = which;
+    // gSprites[invisibleSpriteId].sBattler = battler;
+    // gSprites[bouncerSpriteId].x2 = 0;
+    // gSprites[bouncerSpriteId].y2 = 0;
 }
 
 void EndBounceEffect(u8 battler, u8 which)
 {
-    u8 bouncerSpriteId;
+    return;
+    // u8 bouncerSpriteId;
 
-    if (which == BOUNCE_HEALTHBOX)
-    {
-        if (!gBattleSpritesDataPtr->healthBoxesData[battler].healthboxIsBouncing)
-            return;
+    // if (which == BOUNCE_HEALTHBOX)
+    // {
+    //     if (!gBattleSpritesDataPtr->healthBoxesData[battler].healthboxIsBouncing)
+    //         return;
 
-        bouncerSpriteId = gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].healthboxBounceSpriteId].sBouncerSpriteId;
-        DestroySprite(&gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].healthboxBounceSpriteId]);
-        gBattleSpritesDataPtr->healthBoxesData[battler].healthboxIsBouncing = 0;
-    }
-    else
-    {
-        if (!gBattleSpritesDataPtr->healthBoxesData[battler].battlerIsBouncing)
-            return;
+    //     bouncerSpriteId = gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].healthboxBounceSpriteId].sBouncerSpriteId;
+    //     DestroySprite(&gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].healthboxBounceSpriteId]);
+    //     gBattleSpritesDataPtr->healthBoxesData[battler].healthboxIsBouncing = 0;
+    // }
+    // else
+    // {
+    //     if (!gBattleSpritesDataPtr->healthBoxesData[battler].battlerIsBouncing)
+    //         return;
 
-        bouncerSpriteId = gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].battlerBounceSpriteId].sBouncerSpriteId;
-        DestroySprite(&gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].battlerBounceSpriteId]);
-        gBattleSpritesDataPtr->healthBoxesData[battler].battlerIsBouncing = 0;
-    }
+    //     bouncerSpriteId = gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].battlerBounceSpriteId].sBouncerSpriteId;
+    //     DestroySprite(&gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].battlerBounceSpriteId]);
+    //     gBattleSpritesDataPtr->healthBoxesData[battler].battlerIsBouncing = 0;
+    // }
 
-    gSprites[bouncerSpriteId].x2 = 0;
-    gSprites[bouncerSpriteId].y2 = 0;
+    // gSprites[bouncerSpriteId].x2 = 0;
+    // gSprites[bouncerSpriteId].y2 = 0;
 }
 
 static void SpriteCB_BounceEffect(struct Sprite *sprite)

@@ -1,0 +1,8 @@
+#ifndef GUARD_BATTLE_INTERFACE_2_H
+#define GUARD_BATTLE_INTERFACE_2_H
+
+void ClearHealthboxWindowIds(void);
+void UpdateHpTextInHealthbox(u32 battler, s16 currHp, s16 maxHp);
+void UpdateHealthboxAttribute(u32 battler, struct Pokemon *mon, u8 elementId);
+
+#endif

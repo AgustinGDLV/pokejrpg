@@ -1432,9 +1432,9 @@ static void SwitchIn_TryShinyAnimShowHealthbox(u32 battler)
     {
         // *TODO
         // DestroySprite(&gSprites[gBattleControllerData[battler]]);
-        UpdateHealthboxAttribute(gHealthboxSpriteIds[battler], &gPlayerParty[gBattlerPartyIndexes[battler]], HEALTHBOX_ALL);
+        UpdateHealthboxAttribute(battler, &gPlayerParty[gBattlerPartyIndexes[battler]], HEALTHBOX_ALL);
         // StartHealthboxSlideIn(battler);
-        SetHealthboxSpriteVisible(gHealthboxSpriteIds[battler]);
+        SetHealthboxSpriteVisible(battler);
         gBattlerControllerFuncs[battler] = SwitchIn_HandleSoundAndEnd;
     }
 }

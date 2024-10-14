@@ -705,7 +705,7 @@ bool8 BattleLoadAllHealthBoxesGfx(u8 state)
     {
         if (state == 1)
         {
-            LoadSpritePalette(&sSpritePalette_Healthbox);
+            LoadSpritePalette(&sSpritePalette_Healthbox); // *TODO - free pal slot
             // LoadIndicatorSpritesGfx();
             CategoryIcons_LoadSpritesGfx();
         }
@@ -747,19 +747,8 @@ bool8 BattleInitAllSprites(u8 *state1, u8 *battler)
         (*state1)++;
         break;
     case 3:
-        if ((gBattleTypeFlags & BATTLE_TYPE_SAFARI) && *battler == 0)
-            gHealthboxSpriteIds[*battler] = CreateSafariPlayerHealthboxSprites();
-        else
-            gHealthboxSpriteIds[*battler] = CreateBattlerHealthboxSprites(*battler);
-
-        (*battler)++;
-        if (*battler == gBattlersCount)
-        {
-            *battler = 0;
-            (*state1)++;
-        }
-        break;
-    case 4:
+        ClearHealthboxWindowIds();
+        CreateInvisibleSprite(SpriteCallbackDummy); // *TODO - te,p fix to prevent first sprite glitches
         InitBattlerHealthboxCoords(*battler);
         if (GetBattlerPosition(*battler) <= B_POSITION_OPPONENT_LEFT)
             DummyBattleInterfaceFunc(gHealthboxSpriteIds[*battler], FALSE);
@@ -773,11 +762,11 @@ bool8 BattleInitAllSprites(u8 *state1, u8 *battler)
             (*state1)++;
         }
         break;
-    case 5:
+    case 4:
         if (GetBattlerSide(*battler) == B_SIDE_PLAYER)
         {
             if (!(gBattleTypeFlags & BATTLE_TYPE_SAFARI))
-                UpdateHealthboxAttribute(gHealthboxSpriteIds[*battler], &gPlayerParty[gBattlerPartyIndexes[*battler]], HEALTHBOX_ALL);
+                UpdateHealthboxAttribute(*battler, &gPlayerParty[gBattlerPartyIndexes[*battler]], HEALTHBOX_ALL);
         }
         SetHealthboxSpriteInvisible(gHealthboxSpriteIds[*battler]);
         (*battler)++;
@@ -787,7 +776,7 @@ bool8 BattleInitAllSprites(u8 *state1, u8 *battler)
             (*state1)++;
         }
         break;
-    case 6:
+    case 5:
         LoadAndCreateEnemyShadowSprites();
         BufferBattlePartyCurrentOrder();
         retVal = TRUE;
