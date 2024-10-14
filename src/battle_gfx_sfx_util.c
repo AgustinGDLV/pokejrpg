@@ -706,7 +706,7 @@ bool8 BattleLoadAllHealthBoxesGfx(u8 state)
         if (state == 1)
         {
             LoadSpritePalette(&sSpritePalette_Healthbox);
-            LoadIndicatorSpritesGfx();
+            // LoadIndicatorSpritesGfx();
             CategoryIcons_LoadSpritesGfx();
         }
         else if (state == 2)
