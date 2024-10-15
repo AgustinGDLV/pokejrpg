@@ -525,7 +525,7 @@ static void CB2_InitBattleInternal(void)
     ResetSpriteData();
     ResetTasks();
     FreeAllSpritePalettes();
-    gReservedSpritePaletteCount = MAX_BATTLERS_COUNT;
+    gReservedSpritePaletteCount = MAX_OPPONENT_BATTLERS;
     SetVBlankCallback(VBlankCB_Battle);
     SetUpBattleVarsAndBirchZigzagoon();
 
@@ -2663,8 +2663,6 @@ void SpriteCallbackDummy_2(struct Sprite *sprite)
 
 void SpriteCB_FaintOpponentMon(struct Sprite *sprite)
 {
-    LoadCompressedPalette(gSpeciesInfo[sprite->sSpeciesId].palette, OBJ_PLTT_ID(15), PLTT_SIZE_4BPP);
-    sprite->oam.paletteNum = 15;
     BeginNormalPaletteFade(0x10000 << sprite->oam.paletteNum, 2, 0, 16, RGB_WHITE);
 
     sprite->oam.objMode = ST_OAM_OBJ_BLEND;

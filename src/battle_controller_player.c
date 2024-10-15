@@ -247,8 +247,7 @@ static void HandleInputChooseAction(u32 battler)
 {
     u16 itemId = gBattleResources->bufferA[battler][2] | (gBattleResources->bufferA[battler][3] << 8);
 
-    DoBounceEffect(battler, BOUNCE_HEALTHBOX, 7, 1);
-    DoBounceEffect(battler, BOUNCE_MON, 7, 1);
+    CreatePopUpIcon(battler);
 
     if (JOY_REPEAT(DPAD_ANY) && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_L_EQUALS_A)
         gPlayerDpadHoldFrames++;
@@ -318,6 +317,9 @@ static void HandleInputChooseAction(u32 battler)
         PlaySE(SE_SELECT);
         TryHideLastUsedBall();
 
+        if (gActionSelectionCursor[battler] != 0)
+            DestroyPopUpIcon(battler);
+
         switch (gActionSelectionCursor[battler])
         {
         case 0: // Top left
@@ -385,6 +387,7 @@ static void HandleInputChooseAction(u32 battler)
                 AddBagItem(itemId, 1);
             }
             PlaySE(SE_SELECT);
+            HidePopUpIcon(battler);
             BtlController_EmitTwoReturnValues(battler, BUFFER_B, B_ACTION_CANCEL_PARTNER, 0);
             PlayerBufferExecCompleted(battler);
         }
@@ -446,6 +449,7 @@ void HandleInputChooseTarget(u32 battler)
             BtlController_EmitTwoReturnValues(battler, BUFFER_B, 10, gMoveSelectionCursor[battler] | (gMultiUsePlayerCursor << 8));
         EndBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX);
         TryHideLastUsedBall();
+        HidePopUpIcon(battler);
         HideGimmickTriggerSprite();
         PlayerBufferExecCompleted(battler);
     }
@@ -782,6 +786,7 @@ void HandleInputChooseMove(u32 battler) // *TODO - bug displaying Dynamax as via
                 BtlController_EmitTwoReturnValues(battler, BUFFER_B, 10, gMoveSelectionCursor[battler] | (gMultiUsePlayerCursor << 8));
             HideGimmickTriggerSprite();
             TryHideLastUsedBall();
+            HidePopUpIcon(battler);
             PlayerBufferExecCompleted(battler);
             break;
         case 1:
@@ -1824,8 +1829,8 @@ static void PrintLinkStandbyMsg(void)
 
 static void PlayerHandleLoadMonSprite(u32 battler)
 {
-    BattleLoadMonSpriteGfx(&gPlayerParty[gBattlerPartyIndexes[battler]], battler);
-    gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
+    // BattleLoadMonSpriteGfx(&gPlayerParty[gBattlerPartyIndexes[battler]], battler);
+    // gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
     gBattlerControllerFuncs[battler] = CompleteOnBattlerSpritePosX_0;
 }
 

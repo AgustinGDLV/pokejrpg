@@ -2162,7 +2162,7 @@ void BtlController_HandleLoadMonSprite(u32 battler, void (*controllerCallback)(u
     gSprites[gBattlerSpriteIds[battler]].x2 = -DISPLAY_WIDTH;
     gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
     gSprites[gBattlerSpriteIds[battler]].data[2] = species;
-    gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
+    gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler - MAX_PLAYER_BATTLERS;
     StartSpriteAnim(&gSprites[gBattlerSpriteIds[battler]], 0);
 
     SetBattlerShadowSpriteCallback(battler, species);

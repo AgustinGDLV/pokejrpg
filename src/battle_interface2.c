@@ -17,6 +17,7 @@
 #include "gpu_regs.h"
 #include "battle_message.h"
 #include "palette.h"
+#include "pokemon_icon.h"
 #include "international_string_util.h"
 #include "safari_zone.h"
 #include "battle_anim.h"
@@ -107,6 +108,7 @@ static const struct WindowTemplate sHealthboxWindowTemplates[] =
 };
 
 EWRAM_DATA static u8 sHealthboxWindowIds[WINDOW_COUNT] = {0};
+EWRAM_DATA static u8 sPopUpIconSpriteIds[MAX_PLAYER_BATTLERS] = {0};
 
 void ClearHealthboxWindowIds(void)
 {
@@ -173,16 +175,12 @@ void UpdateHealthboxAttribute(u32 battler, struct Pokemon *mon, u8 elementId)
     if (battler > MAX_PLAYER_BATTLERS) // safety check
         return;
 
-    UpdateNickInHealthbox(battler, mon);
-    UpdateHpTextInHealthbox(battler, currHp, maxHp);
-
     // if (elementId == HEALTHBOX_LEVEL || elementId == HEALTHBOX_ALL)
     //     UpdateLvlInHealthbox(healthboxSpriteId, GetMonData(mon, MON_DATA_LEVEL));
-
-    // if (elementId == HEALTHBOX_NICK || elementId == HEALTHBOX_ALL)
-        // UpdateNickInHealthbox(battler, mon);
-    // if (elementId == HEALTHBOX_MAX_HP || elementId == HEALTHBOX_CURRENT_HP || elementId == HEALTHBOX_ALL)
-        // UpdateHpTextInHealthbox(battler, currHp, maxHp);
+    if (elementId == HEALTHBOX_NICK || elementId == HEALTHBOX_ALL)
+        UpdateNickInHealthbox(battler, mon);
+    if (elementId == HEALTHBOX_MAX_HP || elementId == HEALTHBOX_CURRENT_HP || elementId == HEALTHBOX_ALL)
+        UpdateHpTextInHealthbox(battler, currHp, maxHp);
     // if (elementId == HEALTHBOX_STATUS_ICON || elementId == HEALTHBOX_ALL)
     //     UpdateStatusIconInHealthbox(healthboxSpriteId);
     // if (elementId == HEALTHBOX_SAFARI_ALL_TEXT)
@@ -191,3 +189,56 @@ void UpdateHealthboxAttribute(u32 battler, struct Pokemon *mon, u8 elementId)
     //     UpdateLeftNoOfBallsTextOnHealthbox(healthboxSpriteId);
 }
 
+#define sBattler    data[0]
+#define sHide       data[1]
+#define sTimer      data[2]
+
+static void SpriteCB_PopUpIcon(struct Sprite* sprite)
+{
+    if (sprite->sHide)
+    {
+        if (++sprite->y == 112)
+        {
+            sPopUpIconSpriteIds[sprite->sBattler] = 0xFF;
+            DestroySprite(sprite);
+        }
+    }
+    else
+    {
+        if (sprite->y != 112 - 10)
+        {
+            sprite->y--;
+        }
+        // else if (++sprite->sTimer >= 2)
+        // {
+        //     sprite->sTimer = 0;
+        //     sprite->y2 ^= 1;
+        // }
+    }
+}
+
+void CreatePopUpIcon(u32 battler)
+{
+    if (sPopUpIconSpriteIds[battler] == 0 || sPopUpIconSpriteIds[battler] == 0xFF)
+    {
+        struct Pokemon *mon = &gPlayerParty[gBattlerPartyIndexes[battler]];
+        u32 species = GetMonData(mon, MON_DATA_SPECIES);
+        u32 personality = GetMonData(mon, MON_DATA_PERSONALITY);
+
+        LoadMonIconPalettes();
+        sPopUpIconSpriteIds[battler] = CreateMonIcon(species, SpriteCB_PopUpIcon, 40 + (80 * battler), 112, 1, personality);
+        gSprites[sPopUpIconSpriteIds[battler]].oam.priority = 1;
+        gSprites[sPopUpIconSpriteIds[battler]].sBattler = battler;
+    }
+}
+
+void HidePopUpIcon(u32 battler)
+{
+    gSprites[sPopUpIconSpriteIds[battler]].sHide = TRUE;
+}
+
+void DestroyPopUpIcon(u32 battler)
+{
+    DestroySprite(&gSprites[sPopUpIconSpriteIds[battler]]);
+    sPopUpIconSpriteIds[battler] = 0xFF;
+}

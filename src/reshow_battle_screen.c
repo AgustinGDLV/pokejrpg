@@ -71,12 +71,12 @@ static void CB2_ReshowBattleScreenAfterMenu(void)
         break;
     case 4:
         FreeAllSpritePalettes();
-        gReservedSpritePaletteCount = MAX_BATTLERS_COUNT;
+        gReservedSpritePaletteCount = MAX_OPPONENT_BATTLERS;
         break;
     case 5:
         ClearSpritesHealthboxAnimData();
         ClearHealthboxWindowIds();
-        CreateInvisibleSprite(SpriteCallbackDummy); // *TODO - te,p fix to prevent first sprite glitches
+        CreateInvisibleSprite(SpriteCallbackDummy); // *TODO - temp fix to prevent first sprite glitches
         break;
     case 6:
         if (BattleLoadAllHealthBoxesGfx(gBattleScripting.reshowHelperState))
@@ -224,7 +224,7 @@ void CreateBattlerSprite(u32 battler)
 
             SetMultiuseSpriteTemplateToPokemon(GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES), GetBattlerPosition(battler));
             gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, GetBattlerSpriteCoord(battler, BATTLER_COORD_X_2), posY, GetBattlerSpriteSubpriority(battler));
-            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
+            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler - MAX_PLAYER_BATTLERS;
             gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;
             gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
             gSprites[gBattlerSpriteIds[battler]].data[2] = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES);
@@ -237,7 +237,7 @@ void CreateBattlerSprite(u32 battler)
             gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, 0x50,
                                                 (8 - gTrainerBacksprites[gSaveBlock2Ptr->playerGender].coordinates.size) * 4 + 80,
                                                  GetBattlerSpriteSubpriority(0));
-            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
+            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler - MAX_PLAYER_BATTLERS;
             gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;
             gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
         }
@@ -247,7 +247,7 @@ void CreateBattlerSprite(u32 battler)
             gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, 0x50,
                                                 (8 - gTrainerBacksprites[TRAINER_BACK_PIC_WALLY].coordinates.size) * 4 + 80,
                                                  GetBattlerSpriteSubpriority(0));
-            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
+            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler - MAX_PLAYER_BATTLERS;
             gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;
             gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
         }
