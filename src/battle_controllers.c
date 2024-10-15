@@ -1986,7 +1986,7 @@ void Controller_WaitForHealthBar(u32 battler)
     SetHealthboxSpriteVisible(gHealthboxSpriteIds[battler]);
     if (hpValue != -1)
     {
-        UpdateHpTextInHealthbox(gHealthboxSpriteIds[battler], hpValue, gBattleMons[battler].maxHP);
+        UpdateHpTextInHealthbox(battler, hpValue, gBattleMons[battler].maxHP);
     }
     else
     {
@@ -2445,7 +2445,7 @@ void BtlController_HandleHealthBarUpdate(u32 battler, bool32 updateHpText)
     {
         SetBattleBarStruct(battler, gHealthboxSpriteIds[battler], maxHP, 0, hpVal);
         if (updateHpText)
-            UpdateHpTextInHealthbox(gHealthboxSpriteIds[battler], 0, maxHP);
+            UpdateHpTextInHealthbox(battler, 0, maxHP);
         TestRunner_Battle_RecordHP(battler, curHP, 0);
     }
 

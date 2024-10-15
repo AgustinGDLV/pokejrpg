@@ -237,6 +237,23 @@ void HidePopUpIcon(u32 battler)
     gSprites[sPopUpIconSpriteIds[battler]].sHide = TRUE;
 }
 
+void HideAllPopUpIcons(void)
+{
+    u32 i;
+    for (i = 0; i < MAX_PLAYER_BATTLERS; ++i)
+        if (sPopUpIconSpriteIds[i] != 0xFF)
+            gSprites[sPopUpIconSpriteIds[i]].sHide = TRUE;
+}
+
+bool32 WaitForPopUpIconsToHide(void)
+{
+    u32 i;
+    for (i = 0; i < MAX_PLAYER_BATTLERS; ++i)
+        if (sPopUpIconSpriteIds[i] != 0xFF)
+            return TRUE;
+    return FALSE;
+}
+
 void DestroyPopUpIcon(u32 battler)
 {
     DestroySprite(&gSprites[sPopUpIconSpriteIds[battler]]);

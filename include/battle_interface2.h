@@ -8,6 +8,8 @@ void UpdateHpTextInHealthbox(u32 battler, s16 currHp, s16 maxHp);
 void UpdateHealthboxAttribute(u32 battler, struct Pokemon *mon, u8 elementId);
 void CreatePopUpIcon(u32 battler);
 void HidePopUpIcon(u32 battler);
+void HideAllPopUpIcons(void);
+bool32 WaitForPopUpIconsToHide(void);
 void DestroyPopUpIcon(u32 battler);
 
 #endif
