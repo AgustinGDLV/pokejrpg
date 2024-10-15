@@ -634,7 +634,7 @@ void BattleLoadMonSpriteGfx(struct Pokemon *mon, u32 battler)
                                  species, currentPersonality);
     }
 
-    paletteOffset = OBJ_PLTT_ID(battler);
+    paletteOffset = OBJ_PLTT_ID(battler - MAX_PLAYER_BATTLERS);
 
     if (gBattleSpritesDataPtr->battlerData[battler].transformSpecies == SPECIES_NONE)
         lzPaletteData = GetMonFrontSpritePal(mon);
@@ -643,7 +643,7 @@ void BattleLoadMonSpriteGfx(struct Pokemon *mon, u32 battler)
 
     LZDecompressWram(lzPaletteData, gDecompressionBuffer);
     LoadPalette(gDecompressionBuffer, paletteOffset, PLTT_SIZE_4BPP);
-    LoadPalette(gDecompressionBuffer, BG_PLTT_ID(8) + BG_PLTT_ID(battler), PLTT_SIZE_4BPP);
+    LoadPalette(gDecompressionBuffer, BG_PLTT_ID(8) + BG_PLTT_ID(battler - MAX_PLAYER_BATTLERS), PLTT_SIZE_4BPP);
 
     // transform's pink color
     if (gBattleSpritesDataPtr->battlerData[battler].transformSpecies != SPECIES_NONE)
@@ -706,8 +706,9 @@ bool8 BattleLoadAllHealthBoxesGfx(u8 state)
         if (state == 1)
         {
             LoadSpritePalette(&sSpritePalette_Healthbox);
-            LoadIndicatorSpritesGfx();
-            CategoryIcons_LoadSpritesGfx();
+            return TRUE;
+            // LoadIndicatorSpritesGfx();
+            // CategoryIcons_LoadSpritesGfx();
         }
         else if (state == 2)
             LoadCompressedSpriteSheet(&sSpriteSheets_Healthbox[0]);
@@ -733,34 +734,10 @@ bool8 BattleInitAllSprites(u8 *state1, u8 *battler)
         (*state1)++;
         break;
     case 1:
-        if (!BattleLoadAllHealthBoxesGfx(*battler))
-        {
-            (*battler)++;
-        }
-        else
-        {
-            *battler = 0;
-            (*state1)++;
-        }
-        break;
-    case 2:
-        (*state1)++;
-        break;
-    case 3:
-        if ((gBattleTypeFlags & BATTLE_TYPE_SAFARI) && *battler == 0)
-            gHealthboxSpriteIds[*battler] = CreateSafariPlayerHealthboxSprites();
-        else
-            gHealthboxSpriteIds[*battler] = CreateBattlerHealthboxSprites(*battler);
+        LoadSpritePalette(&sSpritePalette_Healthbox); // *TODO - rename
+        ClearHealthboxWindowIds();
+        CreateInvisibleSprite(SpriteCallbackDummy); // *TODO - temp fix to prevent first sprite glitches
 
-        (*battler)++;
-        if (*battler == gBattlersCount)
-        {
-            *battler = 0;
-            (*state1)++;
-        }
-        break;
-    case 4:
-        InitBattlerHealthboxCoords(*battler);
         if (GetBattlerPosition(*battler) <= B_POSITION_OPPONENT_LEFT)
             DummyBattleInterfaceFunc(gHealthboxSpriteIds[*battler], FALSE);
         else
@@ -773,13 +750,10 @@ bool8 BattleInitAllSprites(u8 *state1, u8 *battler)
             (*state1)++;
         }
         break;
-    case 5:
+    case 2:
         if (GetBattlerSide(*battler) == B_SIDE_PLAYER)
-        {
-            if (!(gBattleTypeFlags & BATTLE_TYPE_SAFARI))
-                UpdateHealthboxAttribute(gHealthboxSpriteIds[*battler], &gPlayerParty[gBattlerPartyIndexes[*battler]], HEALTHBOX_ALL);
-        }
-        SetHealthboxSpriteInvisible(gHealthboxSpriteIds[*battler]);
+            UpdateHealthboxAttribute(*battler, &gPlayerParty[gBattlerPartyIndexes[*battler]], HEALTHBOX_ALL);
+        
         (*battler)++;
         if (*battler == gBattlersCount)
         {
@@ -787,7 +761,7 @@ bool8 BattleInitAllSprites(u8 *state1, u8 *battler)
             (*state1)++;
         }
         break;
-    case 6:
+    case 3:
         LoadAndCreateEnemyShadowSprites();
         BufferBattlePartyCurrentOrder();
         retVal = TRUE;
@@ -890,7 +864,7 @@ void HandleSpeciesGfxDataChange(u8 battlerAtk, u8 battlerDef, bool32 megaEvo, bo
     src = gMonSpritesGfxPtr->spritesGfx[position];
     dst = (void *)(OBJ_VRAM0 + gSprites[gBattlerSpriteIds[battlerAtk]].oam.tileNum * 32);
     DmaCopy32(3, src, dst, MON_PIC_SIZE);
-    paletteOffset = OBJ_PLTT_ID(battlerAtk);
+    paletteOffset = OBJ_PLTT_ID(battlerAtk - MAX_PLAYER_BATTLERS);
     lzPaletteData = GetMonSpritePalFromSpeciesAndPersonality(targetSpecies, isShiny, personalityValue);
     LZDecompressWram(lzPaletteData, gDecompressionBuffer);
     LoadPalette(gDecompressionBuffer, paletteOffset, PLTT_SIZE_4BPP);
@@ -932,7 +906,7 @@ void BattleLoadSubstituteOrMonSpriteGfx(u8 battler, bool8 loadMonSprite)
             Dma3CopyLarge32_(gMonSpritesGfxPtr->spritesGfx[position], &gMonSpritesGfxPtr->spritesGfx[position][MON_PIC_SIZE * i], MON_PIC_SIZE);
         }
 
-        palOffset = OBJ_PLTT_ID(battler);
+        palOffset = OBJ_PLTT_ID(battler - MAX_PLAYER_BATTLERS);
         LoadCompressedPalette(gBattleAnimSpritePal_Substitute, palOffset, PLTT_SIZE_4BPP);
     }
     else
@@ -1282,7 +1256,7 @@ void ClearTemporarySpeciesSpriteData(u8 battler, bool8 dontClearSubstitute)
 void AllocateMonSpritesGfx(void)
 {
     u8 i = 0, j;
-
+    // *TODO - free RAM
     gMonSpritesGfxPtr = NULL;
     gMonSpritesGfxPtr = AllocZeroed(sizeof(*gMonSpritesGfxPtr));
     gMonSpritesGfxPtr->firstDecompressed = AllocZeroed(MON_PIC_SIZE * 4 * MAX_BATTLERS_COUNT);

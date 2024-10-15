@@ -19,7 +19,6 @@
 // this file's functions
 static void CB2_ReshowBattleScreenAfterMenu(void);
 static bool8 LoadBattlerSpriteGfx(u32 battler);
-static void CreateHealthboxSprite(u32 battler);
 static void ClearBattleBgCntBaseBlocks(void);
 
 void ReshowBattleScreenDummy(void)
@@ -72,10 +71,12 @@ static void CB2_ReshowBattleScreenAfterMenu(void)
         break;
     case 4:
         FreeAllSpritePalettes();
-        gReservedSpritePaletteCount = MAX_BATTLERS_COUNT;
+        gReservedSpritePaletteCount = MAX_OPPONENT_BATTLERS;
         break;
     case 5:
         ClearSpritesHealthboxAnimData();
+        ClearHealthboxWindowIds();
+        CreateInvisibleSprite(SpriteCallbackDummy); // *TODO - temp fix to prevent first sprite glitches
         break;
     case 6:
         if (BattleLoadAllHealthBoxesGfx(gBattleScripting.reshowHelperState))
@@ -124,13 +125,13 @@ static void CB2_ReshowBattleScreenAfterMenu(void)
         CreateBattlerSprite(B_POSITION_OPPONENT_5);
         break;
     case 17:
-        CreateHealthboxSprite(0);
+        UpdateHealthboxAttribute(0, &gPlayerParty[gBattlerPartyIndexes[0]], HEALTHBOX_ALL);
         break;
     case 18:
-        CreateHealthboxSprite(1);
+        UpdateHealthboxAttribute(1, &gPlayerParty[gBattlerPartyIndexes[1]], HEALTHBOX_ALL);
         break;
     case 19:
-        CreateHealthboxSprite(2);
+        UpdateHealthboxAttribute(2, &gPlayerParty[gBattlerPartyIndexes[2]], HEALTHBOX_ALL);
         break;
     case 20:
         {
@@ -223,7 +224,7 @@ void CreateBattlerSprite(u32 battler)
 
             SetMultiuseSpriteTemplateToPokemon(GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES), GetBattlerPosition(battler));
             gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, GetBattlerSpriteCoord(battler, BATTLER_COORD_X_2), posY, GetBattlerSpriteSubpriority(battler));
-            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
+            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler - MAX_PLAYER_BATTLERS;
             gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;
             gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
             gSprites[gBattlerSpriteIds[battler]].data[2] = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_SPECIES);
@@ -236,7 +237,7 @@ void CreateBattlerSprite(u32 battler)
             gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, 0x50,
                                                 (8 - gTrainerBacksprites[gSaveBlock2Ptr->playerGender].coordinates.size) * 4 + 80,
                                                  GetBattlerSpriteSubpriority(0));
-            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
+            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler - MAX_PLAYER_BATTLERS;
             gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;
             gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
         }
@@ -246,7 +247,7 @@ void CreateBattlerSprite(u32 battler)
             gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, 0x50,
                                                 (8 - gTrainerBacksprites[TRAINER_BACK_PIC_WALLY].coordinates.size) * 4 + 80,
                                                  GetBattlerSpriteSubpriority(0));
-            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
+            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler - MAX_PLAYER_BATTLERS;
             gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;
             gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
         }
@@ -258,47 +259,5 @@ void CreateBattlerSprite(u32 battler)
         }
 
         gSprites[gBattlerSpriteIds[battler]].invisible = gBattleSpritesDataPtr->battlerData[battler].invisible;
-    }
-}
-
-static void CreateHealthboxSprite(u32 battler)
-{
-    if (battler < gBattlersCount)
-    {
-        u8 healthboxSpriteId;
-
-        if (gBattleTypeFlags & BATTLE_TYPE_SAFARI && battler == B_POSITION_PLAYER_LEFT)
-            healthboxSpriteId = CreateSafariPlayerHealthboxSprites();
-        else if (gBattleTypeFlags & BATTLE_TYPE_WALLY_TUTORIAL && battler == B_POSITION_PLAYER_LEFT)
-            return;
-        else
-            healthboxSpriteId = CreateBattlerHealthboxSprites(battler);
-
-        gHealthboxSpriteIds[battler] = healthboxSpriteId;
-        InitBattlerHealthboxCoords(battler);
-        SetHealthboxSpriteVisible(healthboxSpriteId);
-
-        if (GetBattlerSide(battler) != B_SIDE_PLAYER)
-            UpdateHealthboxAttribute(gHealthboxSpriteIds[battler], &gEnemyParty[gBattlerPartyIndexes[battler]], HEALTHBOX_ALL);
-        else if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
-            UpdateHealthboxAttribute(gHealthboxSpriteIds[battler], &gPlayerParty[gBattlerPartyIndexes[battler]], HEALTHBOX_SAFARI_ALL_TEXT);
-        else
-            UpdateHealthboxAttribute(gHealthboxSpriteIds[battler], &gPlayerParty[gBattlerPartyIndexes[battler]], HEALTHBOX_ALL);
-
-        if (GetBattlerPosition(battler) == B_POSITION_OPPONENT_RIGHT || GetBattlerPosition(battler) == B_POSITION_PLAYER_RIGHT)
-            DummyBattleInterfaceFunc(gHealthboxSpriteIds[battler], TRUE);
-        else
-            DummyBattleInterfaceFunc(gHealthboxSpriteIds[battler], FALSE);
-
-        if (GetBattlerSide(battler) != B_SIDE_PLAYER)
-        {
-            if (GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_HP) == 0)
-                SetHealthboxSpriteInvisible(healthboxSpriteId);
-        }
-        else if (!(gBattleTypeFlags & BATTLE_TYPE_SAFARI))
-        {
-            if (!IsValidForBattle(&gPlayerParty[gBattlerPartyIndexes[battler]]))
-                SetHealthboxSpriteInvisible(healthboxSpriteId);
-        }
     }
 }

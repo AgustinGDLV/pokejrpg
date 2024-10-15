@@ -1821,7 +1821,7 @@ void StartSendOutAnim(u32 battler, bool32 dontClearSubstituteBit, bool32 doSlide
     // *TODO
     struct Pokemon *party = GetBattlerParty(battler);
     gBattleSpritesDataPtr->healthBoxesData[battler].ballAnimActive = FALSE;
-    UpdateHealthboxAttribute(gHealthboxSpriteIds[battler], &party[gBattlerPartyIndexes[battler]], HEALTHBOX_ALL);
+    UpdateHealthboxAttribute(battler, &party[gBattlerPartyIndexes[battler]], HEALTHBOX_ALL);
     return;
 
     // u16 species;
@@ -1986,7 +1986,7 @@ void Controller_WaitForHealthBar(u32 battler)
     SetHealthboxSpriteVisible(gHealthboxSpriteIds[battler]);
     if (hpValue != -1)
     {
-        UpdateHpTextInHealthbox(gHealthboxSpriteIds[battler], HP_CURRENT, hpValue, gBattleMons[battler].maxHP);
+        UpdateHpTextInHealthbox(battler, hpValue, gBattleMons[battler].maxHP);
     }
     else
     {
@@ -2162,7 +2162,7 @@ void BtlController_HandleLoadMonSprite(u32 battler, void (*controllerCallback)(u
     gSprites[gBattlerSpriteIds[battler]].x2 = -DISPLAY_WIDTH;
     gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
     gSprites[gBattlerSpriteIds[battler]].data[2] = species;
-    gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
+    gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler - MAX_PLAYER_BATTLERS;
     StartSpriteAnim(&gSprites[gBattlerSpriteIds[battler]], 0);
 
     SetBattlerShadowSpriteCallback(battler, species);
@@ -2429,6 +2429,13 @@ void BtlController_HandleHealthBarUpdate(u32 battler, bool32 updateHpText)
     maxHP = GetMonData(&party[gBattlerPartyIndexes[battler]], MON_DATA_MAX_HP);
     curHP = GetMonData(&party[gBattlerPartyIndexes[battler]], MON_DATA_HP);
 
+    // *TODO - No need to update for opponents.
+    if (GetBattlerSide(battler) == B_SIDE_OPPONENT)
+    {
+        BattleControllerComplete(battler);
+        return;
+    }
+
     if (hpVal != INSTANT_HP_BAR_DROP)
     {
         SetBattleBarStruct(battler, gHealthboxSpriteIds[battler], maxHP, curHP, hpVal);
@@ -2438,7 +2445,7 @@ void BtlController_HandleHealthBarUpdate(u32 battler, bool32 updateHpText)
     {
         SetBattleBarStruct(battler, gHealthboxSpriteIds[battler], maxHP, 0, hpVal);
         if (updateHpText)
-            UpdateHpTextInHealthbox(gHealthboxSpriteIds[battler], HP_CURRENT, 0, maxHP);
+            UpdateHpTextInHealthbox(battler, 0, maxHP);
         TestRunner_Battle_RecordHP(battler, curHP, 0);
     }
 
@@ -2449,7 +2456,7 @@ void DoStatusIconUpdate(u32 battler)
 {
     struct Pokemon *party = GetBattlerParty(battler);
 
-    UpdateHealthboxAttribute(gHealthboxSpriteIds[battler], &party[gBattlerPartyIndexes[battler]], HEALTHBOX_STATUS_ICON);
+    UpdateHealthboxAttribute(battler, &party[gBattlerPartyIndexes[battler]], HEALTHBOX_STATUS_ICON);
     gBattleSpritesDataPtr->healthBoxesData[battler].statusAnimActive = 0;
     gBattlerControllerFuncs[battler] = Controller_WaitForStatusAnimation;
 }

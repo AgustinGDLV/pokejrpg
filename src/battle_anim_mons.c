@@ -123,7 +123,7 @@ u8 GetBattlerSpriteCoord(u8 battlerId, u8 coordType)
         break;
     }
     case BATTLER_COORD_Y:
-        retVal = 70; // *TODO -- constant
+        retVal = OPPONENT_SPRITE_HEIGHT;
         break;
     case BATTLER_COORD_Y_PIC_OFFSET:
     case BATTLER_COORD_Y_PIC_OFFSET_DEFAULT:
@@ -232,7 +232,7 @@ u8 GetBattlerSpriteFinal_Y(u8 battlerId, u16 species, bool8 a3)
         offset = GetBattlerYDelta(battlerId, species);
         offset -= GetBattlerElevation(battlerId, species);
     }
-    y = offset + 70; // *TODO -- constant
+    y = offset + OPPONENT_SPRITE_HEIGHT;
     if (a3)
     {
         if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)

@@ -372,6 +372,11 @@ void HandleAction_UseMove(void)
         gSpecialStatuses[i].emergencyExited = FALSE;
     }
 
+    if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
+        CreatePopUpIcon(gBattlerAttacker);
+    if (GetBattlerSide(gBattlerTarget) == B_SIDE_PLAYER)
+        CreatePopUpIcon(gBattlerTarget);
+
     gCurrentActionFuncId = B_ACTION_EXEC_SCRIPT;
 }
 
@@ -659,7 +664,8 @@ void HandleAction_WallyBallThrow(void)
 
 void HandleAction_TryFinish(void)
 {
-    if (!HandleFaintedMonActions())
+    HideAllPopUpIcons();
+    if (!HandleFaintedMonActions() && !WaitForPopUpIconsToHide())
     {
         gBattleStruct->faintedActionsState = 0;
         gCurrentActionFuncId = B_ACTION_FINISHED;
@@ -3213,6 +3219,7 @@ u8 AtkCanceller_UnableToUseMove(u32 moveType)
             gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_DESTINY_BOND;
             gStatuses3[gBattlerAttacker] &= ~STATUS3_GRUDGE;
             gStatuses4[gBattlerAttacker] &= ~STATUS4_GLAIVE_RUSH;
+            
             gBattleStruct->atkCancellerTracker++;
             break;
         case CANCELLER_SKY_DROP:
@@ -8224,8 +8231,6 @@ u32 GetMoveTarget(u16 move, u8 setTarget)
         side = BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker));
         if (IsAffectedByFollowMe(gBattlerAttacker, side, move))
             targetBattler = gSideTimers[side].followmeTarget;
-        else if (IsDoubleBattle() && moveTarget & MOVE_TARGET_RANDOM)
-            targetBattler = SetRandomTarget(gBattlerAttacker);
         else
             targetBattler = GetRandomTargetOnSide(side);
         break;

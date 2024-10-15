@@ -37,7 +37,8 @@ void AssignUsableGimmicks(void)
 // Returns whether a battler is able to use a gimmick. Checks consumption and gimmick specific functions.
 bool32 CanActivateGimmick(u32 battler, enum Gimmick gimmick)
 {
-    return gGimmicksInfo[gimmick].CanActivate != NULL && gGimmicksInfo[gimmick].CanActivate(battler);
+    return FALSE;
+    // return gGimmicksInfo[gimmick].CanActivate != NULL && gGimmicksInfo[gimmick].CanActivate(battler);
 }
 
 // Returns whether the player has a gimmick selected while in the move selection menu.
