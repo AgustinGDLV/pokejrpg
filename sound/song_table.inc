@@ -356,7 +356,7 @@ gSongTable::
 	song mus_littleroot_test, 0, 0
 	song mus_gsc_route38, 0, GBS_MUSIC_ROUTE_37
 	song mus_caught, 0, 0
-	song mus_victory_wild, 0, 0
+	song mus_victory_wild, 0, GBS_MUSIC_VICTORY_WILD
 	song mus_victory_gym_leader, 0, 0
 	song mus_victory_league, 0, 0
 	song mus_c_comm_center, 0, GBS_MUSIC_MOBILE_CENTER

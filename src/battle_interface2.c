@@ -197,7 +197,7 @@ static void SpriteCB_PopUpIcon(struct Sprite* sprite)
 {
     if (sprite->sHide)
     {
-        if (++sprite->y == 112)
+        if (++sprite->y == 120)
         {
             sPopUpIconSpriteIds[sprite->sBattler] = 0xFF;
             DestroySprite(sprite);
@@ -205,7 +205,7 @@ static void SpriteCB_PopUpIcon(struct Sprite* sprite)
     }
     else
     {
-        if (sprite->y != 112 - 10)
+        if (sprite->y != 112 - 8)
         {
             sprite->y--;
         }

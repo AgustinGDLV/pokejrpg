@@ -318,7 +318,7 @@ static void HandleInputChooseAction(u32 battler)
         TryHideLastUsedBall();
 
         if (gActionSelectionCursor[battler] != 0)
-            DestroyPopUpIcon(battler);
+            HidePopUpIcon(battler);
 
         switch (gActionSelectionCursor[battler])
         {
