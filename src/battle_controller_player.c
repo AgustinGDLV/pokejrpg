@@ -317,7 +317,7 @@ static void HandleInputChooseAction(u32 battler)
         PlaySE(SE_SELECT);
         TryHideLastUsedBall();
 
-        if (gActionSelectionCursor[battler] != 0)
+        if (gActionSelectionCursor[battler] != 0) // keep pop-up if selecting move
             HidePopUpIcon(battler);
 
         switch (gActionSelectionCursor[battler])
@@ -604,11 +604,8 @@ static void HideAllTargets(void)
     s32 i;
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
     {
-        if (IsBattlerAlive(i) && gBattleSpritesDataPtr->healthBoxesData[i].healthboxIsBouncing)
-        {
+        if (IsBattlerAlive(i))
             gSprites[gBattlerSpriteIds[i]].callback = SpriteCB_HideAsMoveTarget;
-            EndBounceEffect(i, BOUNCE_HEALTHBOX);
-        }
     }
 }
 
@@ -617,11 +614,8 @@ static void HideShownTargets(u32 battler)
     s32 i;
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
     {
-        if (IsBattlerAlive(i) && gBattleSpritesDataPtr->healthBoxesData[i].healthboxIsBouncing && i != battler)
-        {
+        if (IsBattlerAlive(i) && i != battler)
             gSprites[gBattlerSpriteIds[i]].callback = SpriteCB_HideAsMoveTarget;
-            EndBounceEffect(i, BOUNCE_HEALTHBOX);
-        }
     }
 }
 
@@ -640,6 +634,7 @@ void HandleInputShowEntireFieldTargets(u32 battler)
             BtlController_EmitTwoReturnValues(battler, BUFFER_B, 10, gMoveSelectionCursor[battler] | RET_GIMMICK | (gMultiUsePlayerCursor << 8));
         else
             BtlController_EmitTwoReturnValues(battler, BUFFER_B, 10, gMoveSelectionCursor[battler] | (gMultiUsePlayerCursor << 8));
+        HidePopUpIcon(battler);
         HideGimmickTriggerSprite();
         PlayerBufferExecCompleted(battler);
     }
@@ -668,6 +663,7 @@ void HandleInputShowTargets(u32 battler)
             BtlController_EmitTwoReturnValues(battler, BUFFER_B, 10, gMoveSelectionCursor[battler] | RET_GIMMICK | (gMultiUsePlayerCursor << 8));
         else
             BtlController_EmitTwoReturnValues(battler, BUFFER_B, 10, gMoveSelectionCursor[battler] | (gMultiUsePlayerCursor << 8));
+        HidePopUpIcon(battler);
         HideGimmickTriggerSprite();
         TryHideLastUsedBall();
         PlayerBufferExecCompleted(battler);
